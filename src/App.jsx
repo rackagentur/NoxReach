@@ -3,7 +3,7 @@ import { useState, useEffect, useRef, useMemo } from "react";
 const COLORS = {
   bg: "#0A0A0A", surface: "#111111", surfaceHover: "#181818",
   border: "#1E1E1E", borderBright: "#2A2A2A",
-  purple: "#7B3FE4", purpleLight: "#9B5FFF", purpleDim: "#4A2490", purpleBg: "#1A0F2E",
+  purple: "#6B2FD4", purpleLight: "#8B4FFF", purpleDim: "#3A1A80", purpleBg: "#0F0820",
   gold: "#D4AF37", goldDim: "#8A7020",
   text: "#F0F0F0", textSecondary: "#888888", textMuted: "#444444",
   green: "#22C55E", greenDim: "#0F4A25", red: "#EF4444",
@@ -37,24 +37,24 @@ const INITIAL_LEADS = [
 
 const TIER_COLORS = { A1: COLORS.gold, A2: COLORS.purple, A3: COLORS.textSecondary };
 
-const STORAGE_KEY      = "stageflow_leads_v1";
-const STORAGE_KEY_GIGS = "stageflow_gigs_v1";
+const STORAGE_KEY      = "noxreach_leads_v1";
+const STORAGE_KEY_GIGS = "noxreach_gigs_v1";
 function loadLeads() { try { const r = localStorage.getItem(STORAGE_KEY); if (r) return JSON.parse(r); } catch {} return INITIAL_LEADS; }
 function saveLeads(leads) { try { localStorage.setItem(STORAGE_KEY, JSON.stringify(leads)); } catch {} }
 function loadGigs() { try { const r = localStorage.getItem(STORAGE_KEY_GIGS); if (r) return JSON.parse(r); } catch {} return INITIAL_GIGS; }
 function saveGigs(gigs) { try { localStorage.setItem(STORAGE_KEY_GIGS, JSON.stringify(gigs)); } catch {} }
 
-const STORAGE_KEY_SETTINGS = "stageflow_settings_v1";
+const STORAGE_KEY_SETTINGS = "noxreach_settings_v1";
 const DEFAULT_SETTINGS = { followup1Days: 5, followup2Days: 14 };
 function loadSettings() { try { const r = localStorage.getItem(STORAGE_KEY_SETTINGS); if (r) return { ...DEFAULT_SETTINGS, ...JSON.parse(r) }; } catch {} return DEFAULT_SETTINGS; }
 function saveSettings(s) { try { localStorage.setItem(STORAGE_KEY_SETTINGS, JSON.stringify(s)); } catch {} }
 
-const STORAGE_KEY_PRO = "stageflow_pro_v1";
+const STORAGE_KEY_PRO = "noxreach_pro_v1";
 function loadIsPro() { try { return localStorage.getItem(STORAGE_KEY_PRO) === "true"; } catch { return false; } }
 function saveIsPro(v) { try { localStorage.setItem(STORAGE_KEY_PRO, String(v)); } catch {} }
 const FREE_LIMITS = { leads: 10, gigs: 5, templates: 2 };
 
-const STORAGE_KEY_TAGS = "stageflow_tags_v1";
+const STORAGE_KEY_TAGS = "noxreach_tags_v1";
 const DEFAULT_TAGS = ["Tech-House", "Disco", "Festival"];
 const TAG_PALETTE   = ["#7B3FE4","#3B82F6","#EC4899","#F59E0B","#F43F5E","#22C55E","#F97316","#14B8A6","#8B5CF6","#EAB308"];
 function tagColor(tag) {
@@ -114,13 +114,27 @@ function Toast({ toast }) {
 }
 
 function Logo({ size = 24 }) {
-  const bars = [0.4, 0.65, 0.85, 1.0];
+  const s = size;
   return (
-    <div style={{ display: "flex", alignItems: "flex-end", gap: size * 0.12, height: size }}>
-      {bars.map((h, i) => (
-        <div key={i} style={{ width: size * 0.18, height: size * h, background: i === 3 ? COLORS.purple : `rgba(123,63,228,${0.4 + i * 0.2})`, borderRadius: size * 0.04, boxShadow: i === 3 ? `0 0 ${size * 0.3}px rgba(123,63,228,0.6)` : "none" }} />
-      ))}
-    </div>
+    <svg width={s} height={s} viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <rect width="32" height="32" rx="6" fill="#0F0820"/>
+      {/* N */}
+      <path d="M3 23V9h2.8l5.6 9.2V9H14v14h-2.8L5.6 13.8V23H3z" fill="url(#nl)"/>
+      {/* R */}
+      <path d="M16 9h5.2c2.1 0 3.8 1.7 3.8 3.8 0 1.5-.8 2.8-2.1 3.4L26 23h-3.2l-2.6-7.4H19V23h-3V9z M19 11.8v3.4h2.1c.7 0 1.3-.6 1.3-1.3v-.8c0-.7-.6-1.3-1.3-1.3H19z" fill="url(#rl)"/>
+      {/* cyan reach line through center */}
+      <line x1="10" y1="16" x2="22" y2="16" stroke="#00D4FF" strokeWidth="1.2" strokeOpacity="0.7"/>
+      <defs>
+        <linearGradient id="nl" x1="3" y1="9" x2="14" y2="23" gradientUnits="userSpaceOnUse">
+          <stop offset="0%" stopColor="#8B4FFF"/>
+          <stop offset="100%" stopColor="#6B2FD4"/>
+        </linearGradient>
+        <linearGradient id="rl" x1="16" y1="9" x2="26" y2="23" gradientUnits="userSpaceOnUse">
+          <stop offset="0%" stopColor="#00D4FF"/>
+          <stop offset="100%" stopColor="#8B4FFF"/>
+        </linearGradient>
+      </defs>
+    </svg>
   );
 }
 
@@ -1145,7 +1159,7 @@ function UpgradeModal({ onClose, onUpgrade, reason }) {
 
           {/* Pricing */}
           <div style={{ textAlign: "center", marginBottom: 20 }}>
-            <div style={{ fontSize: 11, color: COLORS.textMuted, letterSpacing: "0.1em", textTransform: "uppercase", marginBottom: 8 }}>Stageflow Pro</div>
+            <div style={{ fontSize: 11, color: COLORS.textMuted, letterSpacing: "0.1em", textTransform: "uppercase", marginBottom: 8 }}>NoxReach Pro</div>
             <div style={{ display: "flex", alignItems: "baseline", justifyContent: "center", gap: 4, marginBottom: 4 }}>
               <span style={{ fontSize: 36, fontWeight: 800, color: COLORS.text, fontFamily: "'DM Mono', monospace" }}>€9</span>
               <span style={{ fontSize: 14, color: COLORS.textSecondary }}>/month</span>
@@ -1640,11 +1654,11 @@ function ReplyHubView({ leads, onMove, showToast, TAG_COLORS }) {
   const [selected, setSelected] = useState(null);
   const [replyText, setReplyText] = useState("");
   const [readIds, setReadIds] = useState(() => {
-    try { return new Set(JSON.parse(localStorage.getItem("stageflow_read_replies") || "[]")); } catch { return new Set(); }
+    try { return new Set(JSON.parse(localStorage.getItem("noxreach_read_replies") || "[]")); } catch { return new Set(); }
   });
 
   const markRead = (id) => {
-    setReadIds(prev => { const n = new Set(prev); n.add(id); try { localStorage.setItem("stageflow_read_replies", JSON.stringify([...n])); } catch {} return n; });
+    setReadIds(prev => { const n = new Set(prev); n.add(id); try { localStorage.setItem("noxreach_read_replies", JSON.stringify([...n])); } catch {} return n; });
   };
 
   // Replied leads are the "inbox" — they represent inbound promoter interest
@@ -1812,7 +1826,7 @@ function ReplyHubView({ leads, onMove, showToast, TAG_COLORS }) {
   );
 }
 
-export default function Stageflow() {
+export default function NoxReach() {
   const [activeTab, setActiveTab]       = useState("pipeline");
   const [leads, setLeads]               = useState(() => loadLeads());
   const [gigs,  setGigs]                = useState(() => loadGigs());
@@ -1923,7 +1937,7 @@ export default function Stageflow() {
   const repliedCount = leads.filter(l => !l.archived && (l.stage === "replied" || l.stage === "booked")).length;
   const unreadCount  = useMemo(() => {
     try {
-      const read = new Set(JSON.parse(localStorage.getItem("stageflow_read_replies") || "[]"));
+      const read = new Set(JSON.parse(localStorage.getItem("noxreach_read_replies") || "[]"));
       return leads.filter(l => !l.archived && (l.stage === "replied" || l.stage === "booked") && !read.has(l.id)).length;
     } catch { return 0; }
   }, [leads]);
@@ -1977,8 +1991,8 @@ export default function Stageflow() {
           <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
             <Logo size={28} />
             <div>
-              <div style={{ fontSize: 16, fontWeight: 800, letterSpacing: "-0.02em", color: COLORS.text }}>Stageflow</div>
-              <div style={{ fontSize: 10, color: COLORS.textSecondary, letterSpacing: "0.06em" }}>BOOKING OS</div>
+              <div style={{ fontSize: 16, fontWeight: 800, letterSpacing: "-0.02em", color: COLORS.text }}>NoxReach</div>
+              <div style={{ fontSize: 10, color: COLORS.textSecondary, letterSpacing: "0.06em" }}>NIGHTLIFE OS</div>
             </div>
           </div>
         </div>
