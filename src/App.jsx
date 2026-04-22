@@ -1,4 +1,316 @@
-import { useState, useEffect, useRef, useMemo } from "react";
+import { useState, useEffect, useRef, useMemo, useCallback } from "react";
+import { createClient } from "@supabase/supabase-js";
+
+// ── Supabase client ──────────────────────────────────────────────────────────
+const SUPABASE_URL  = "https://ckttttvgvpvflgjzkbmy.supabase.co";
+const SUPABASE_ANON = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNrdHR0dHZndnB2ZmxnanprYm15Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY4ODc4MzcsImV4cCI6MjA5MjQ2MzgzN30.25WvWNkI3ULQZuelqfv_V6YlsBFT74AjPhVua6tB4KU";
+const supabase = createClient(SUPABASE_URL, SUPABASE_ANON);
+
+
+// ── Auth Styles (injected once) ───────────────────────────────────────────────
+const AUTH_CSS = `
+  @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap');
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { height: 100%; }
+  body { font-family: 'DM Sans', sans-serif; background: #060608; color: #f0f0f0; overflow: hidden; }
+  @keyframes authFadeIn  { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
+  @keyframes authGlow    { 0%,100% { opacity: 0.5; } 50% { opacity: 1; } }
+  @keyframes authSpin    { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+  @keyframes authPulse   { 0%,100% { opacity: 1; } 50% { opacity: 0.4; } }
+  @keyframes gridScroll  { from { transform: translateY(0); } to { transform: translateY(80px); } }
+`;
+
+// ── LoginScreen ───────────────────────────────────────────────────────────────
+function LoginScreen({ onAuth }) {
+  const [mode, setMode]       = useState("login"); // login | signup | reset
+  const [email, setEmail]     = useState("");
+  const [password, setPassword] = useState("");
+  const [name, setName]       = useState("");
+  const [loading, setLoading] = useState(false);
+  const [error, setError]     = useState("");
+  const [success, setSuccess] = useState("");
+
+  const C = {
+    bg: "#060608", surface: "#0f0f18", border: "#1c1c2e", border2: "#252538",
+    purple: "#6B2FD4", purpleL: "#8B4FFF", cyan: "#00D4FF",
+    text: "#f0f0f0", text2: "#9090a8", text3: "#50506a",
+    gold: "#D4AF37", green: "#22C55E", red: "#ef4444",
+  };
+
+  const inputStyle = {
+    width: "100%", padding: "13px 16px",
+    background: C.surface, border: `1px solid ${C.border2}`,
+    borderRadius: 10, color: C.text, fontSize: 14, outline: "none",
+    fontFamily: "'DM Sans', sans-serif",
+    transition: "border-color 0.2s",
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setError(""); setSuccess(""); setLoading(true);
+    try {
+      if (mode === "login") {
+        const { data, error: err } = await supabase.auth.signInWithPassword({ email, password });
+        if (err) throw err;
+        onAuth(data.session, data.user);
+      } else if (mode === "signup") {
+        if (!name.trim()) throw new Error("Please enter your name.");
+        if (password.length < 6) throw new Error("Password must be at least 6 characters.");
+        const { data, error: err } = await supabase.auth.signUp({
+          email, password,
+          options: { data: { full_name: name.trim() } }
+        });
+        if (err) throw err;
+        if (data.session) {
+          onAuth(data.session, data.user);
+        } else {
+          setSuccess("Account created! Check your email to confirm, then log in.");
+          setMode("login");
+        }
+      } else if (mode === "reset") {
+        const { error: err } = await supabase.auth.resetPasswordForEmail(email, {
+          redirectTo: window.location.origin,
+        });
+        if (err) throw err;
+        setSuccess("Password reset email sent. Check your inbox.");
+        setMode("login");
+      }
+    } catch (err) {
+      setError(err.message || "Something went wrong.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div style={{
+      minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center",
+      background: C.bg, position: "relative", overflow: "hidden",
+    }}>
+      <style>{AUTH_CSS}</style>
+
+      {/* Grid background */}
+      <div style={{
+        position: "absolute", inset: 0, pointerEvents: "none",
+        backgroundImage: "linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px)",
+        backgroundSize: "80px 80px",
+        animation: "gridScroll 8s linear infinite",
+        maskImage: "radial-gradient(ellipse 80% 80% at 50% 50%, black 0%, transparent 100%)",
+      }} />
+
+      {/* Glow */}
+      <div style={{
+        position: "absolute", top: "50%", left: "50%",
+        transform: "translate(-50%, -60%)",
+        width: 700, height: 500,
+        background: "radial-gradient(ellipse, rgba(107,47,212,0.15) 0%, rgba(0,212,255,0.04) 50%, transparent 70%)",
+        pointerEvents: "none", animation: "authGlow 4s ease infinite",
+      }} />
+
+      {/* Card */}
+      <div style={{
+        position: "relative", zIndex: 1,
+        width: "100%", maxWidth: 420, padding: "0 24px",
+        animation: "authFadeIn 0.5s ease",
+      }}>
+        {/* Logo */}
+        <div style={{ textAlign: "center", marginBottom: 36 }}>
+          <div style={{
+            display: "inline-flex", alignItems: "center", justifyContent: "center",
+            width: 52, height: 52, borderRadius: 14, marginBottom: 14,
+            background: `linear-gradient(135deg, ${C.purple}, ${C.purpleL})`,
+            boxShadow: `0 0 40px rgba(107,47,212,0.4)`,
+          }}>
+            <svg width="28" height="28" viewBox="0 0 32 32" fill="none">
+              <path d="M3 23V9h2.8l5.6 9.2V9H14v14h-2.8L5.6 13.8V23H3z" fill="white"/>
+              <path d="M16 9h5.2c2.1 0 3.8 1.7 3.8 3.8 0 1.5-.8 2.8-2.1 3.4L26 23h-3.2l-2.6-7.4H19V23h-3V9z M19 11.8v3.4h2.1c.7 0 1.3-.6 1.3-1.3v-.8c0-.7-.6-1.3-1.3-1.3H19z" fill="rgba(0,212,255,0.9)"/>
+            </svg>
+          </div>
+          <div style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: 28, letterSpacing: "0.06em", color: C.text }}>
+            NoxReach
+          </div>
+          <div style={{ fontSize: 11, color: C.cyan, letterSpacing: "0.14em", opacity: 0.8, marginTop: 2 }}>
+            NIGHTLIFE OS
+          </div>
+        </div>
+
+        {/* Form card */}
+        <div style={{
+          background: C.surface, border: `1px solid ${C.border2}`,
+          borderRadius: 16, padding: "32px 28px",
+          boxShadow: "0 32px 80px rgba(0,0,0,0.6)",
+        }}>
+          {/* Tab switcher */}
+          {mode !== "reset" && (
+            <div style={{
+              display: "flex", gap: 2, marginBottom: 28,
+              background: "#0a0a10", borderRadius: 10, padding: 3,
+            }}>
+              {[["login", "Log in"], ["signup", "Sign up"]].map(([m, label]) => (
+                <button key={m} onClick={() => { setMode(m); setError(""); setSuccess(""); }}
+                  style={{
+                    flex: 1, padding: "9px 0", borderRadius: 8, border: "none",
+                    cursor: "pointer", fontSize: 13, fontWeight: 600,
+                    fontFamily: "'DM Sans', sans-serif",
+                    background: mode === m ? C.purple : "transparent",
+                    color: mode === m ? "#fff" : C.text2,
+                    transition: "all 0.15s",
+                  }}
+                >{label}</button>
+              ))}
+            </div>
+          )}
+
+          {mode === "reset" && (
+            <div style={{ marginBottom: 24 }}>
+              <div style={{ fontSize: 16, fontWeight: 700, marginBottom: 6 }}>Reset password</div>
+              <div style={{ fontSize: 13, color: C.text2 }}>Enter your email and we'll send a reset link.</div>
+            </div>
+          )}
+
+          <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: 14 }}>
+            {mode === "signup" && (
+              <div>
+                <div style={{ fontSize: 11, fontWeight: 600, color: C.text2, letterSpacing: "0.06em", textTransform: "uppercase", marginBottom: 7 }}>Name</div>
+                <input
+                  value={name} onChange={e => setName(e.target.value)}
+                  placeholder="Your DJ name or full name"
+                  style={inputStyle} required
+                  onFocus={e => e.target.style.borderColor = C.purple}
+                  onBlur={e => e.target.style.borderColor = C.border2}
+                />
+              </div>
+            )}
+
+            <div>
+              <div style={{ fontSize: 11, fontWeight: 600, color: C.text2, letterSpacing: "0.06em", textTransform: "uppercase", marginBottom: 7 }}>Email</div>
+              <input
+                type="email" value={email} onChange={e => setEmail(e.target.value)}
+                placeholder="your@email.com"
+                style={inputStyle} required
+                onFocus={e => e.target.style.borderColor = C.purple}
+                onBlur={e => e.target.style.borderColor = C.border2}
+              />
+            </div>
+
+            {mode !== "reset" && (
+              <div>
+                <div style={{ fontSize: 11, fontWeight: 600, color: C.text2, letterSpacing: "0.06em", textTransform: "uppercase", marginBottom: 7 }}>Password</div>
+                <input
+                  type="password" value={password} onChange={e => setPassword(e.target.value)}
+                  placeholder={mode === "signup" ? "Min. 6 characters" : "Your password"}
+                  style={inputStyle} required
+                  onFocus={e => e.target.style.borderColor = C.purple}
+                  onBlur={e => e.target.style.borderColor = C.border2}
+                />
+              </div>
+            )}
+
+            {error && (
+              <div style={{
+                padding: "10px 14px", borderRadius: 8,
+                background: "rgba(239,68,68,0.1)", border: "1px solid rgba(239,68,68,0.25)",
+                color: C.red, fontSize: 13, lineHeight: 1.5,
+              }}>{error}</div>
+            )}
+            {success && (
+              <div style={{
+                padding: "10px 14px", borderRadius: 8,
+                background: "rgba(34,197,94,0.1)", border: "1px solid rgba(34,197,94,0.25)",
+                color: C.green, fontSize: 13, lineHeight: 1.5,
+              }}>{success}</div>
+            )}
+
+            <button type="submit" disabled={loading} style={{
+              padding: "13px 0", borderRadius: 10, border: "none",
+              background: loading ? C.purpleL + "88" : `linear-gradient(135deg, ${C.purple}, ${C.purpleL})`,
+              color: "#fff", fontSize: 14, fontWeight: 700,
+              fontFamily: "'DM Sans', sans-serif",
+              cursor: loading ? "not-allowed" : "pointer",
+              display: "flex", alignItems: "center", justifyContent: "center", gap: 8,
+              boxShadow: loading ? "none" : "0 4px 20px rgba(107,47,212,0.4)",
+              transition: "all 0.15s",
+            }}>
+              {loading ? (
+                <><span style={{ display: "inline-block", width: 14, height: 14, border: "2px solid #fff6", borderTopColor: "#fff", borderRadius: "50%", animation: "authSpin 0.7s linear infinite" }} /> Processing...</>
+              ) : mode === "login" ? "Log in →" : mode === "signup" ? "Create account →" : "Send reset link →"}
+            </button>
+          </form>
+
+          {/* Footer links */}
+          <div style={{ marginTop: 20, textAlign: "center", display: "flex", justifyContent: "center", gap: 20 }}>
+            {mode === "login" && (
+              <button onClick={() => { setMode("reset"); setError(""); setSuccess(""); }}
+                style={{ background: "none", border: "none", color: C.text3, fontSize: 12, cursor: "pointer", fontFamily: "'DM Sans', sans-serif" }}>
+                Forgot password?
+              </button>
+            )}
+            {mode === "reset" && (
+              <button onClick={() => { setMode("login"); setError(""); setSuccess(""); }}
+                style={{ background: "none", border: "none", color: C.text3, fontSize: 12, cursor: "pointer", fontFamily: "'DM Sans', sans-serif" }}>
+                ← Back to log in
+              </button>
+            )}
+          </div>
+        </div>
+
+        <div style={{ textAlign: "center", marginTop: 20, fontSize: 12, color: C.text3 }}>
+          Built for DJs who book with intent.
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ── AuthGate ─────────────────────────────────────────────────────────────────
+// Wraps the whole app — shows login screen until authenticated
+function AuthGate({ children }) {
+  const [session, setSession] = useState(undefined); // undefined = loading
+  const [user, setUser]       = useState(null);
+
+  useEffect(() => {
+    // Get initial session
+    supabase.auth.getSession().then(({ data: { session: s } }) => {
+      setSession(s);
+      setUser(s?.user ?? null);
+    });
+
+    // Listen for auth changes
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, s) => {
+      setSession(s);
+      setUser(s?.user ?? null);
+    });
+
+    return () => subscription.unsubscribe();
+  }, []);
+
+  // Loading state
+  if (session === undefined) {
+    return (
+      <div style={{
+        minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center",
+        background: "#060608", flexDirection: "column", gap: 16,
+      }}>
+        <style>{AUTH_CSS}</style>
+        <div style={{
+          width: 40, height: 40, border: "2px solid #1c1c2e",
+          borderTopColor: "#6B2FD4", borderRadius: "50%",
+          animation: "authSpin 0.7s linear infinite",
+        }} />
+        <div style={{ fontSize: 12, color: "#50506a", letterSpacing: "0.1em" }}>LOADING NOXREACH</div>
+      </div>
+    );
+  }
+
+  // Not logged in
+  if (!session) {
+    return <LoginScreen onAuth={(s, u) => { setSession(s); setUser(u); }} />;
+  }
+
+  // Logged in — render the app with user context
+  return children({ user, session, supabase });
+}
+
 
 const COLORS = {
   bg: "#0A0A0A", surface: "#111111", surfaceHover: "#181818",
@@ -1826,7 +2138,14 @@ function ReplyHubView({ leads, onMove, showToast, TAG_COLORS }) {
   );
 }
 
-export default function NoxReach() {
+function NoxReachApp({ user, session, supabase }) {
+  const userEmail = user?.email || "";
+  const userName  = user?.user_metadata?.full_name || userEmail.split("@")[0] || "DJ";
+
+  const handleSignOut = async () => {
+    await supabase.auth.signOut();
+  };
+
   const [activeTab, setActiveTab]       = useState("pipeline");
   const [leads, setLeads]               = useState(() => loadLeads());
   const [gigs,  setGigs]                = useState(() => loadGigs());
@@ -2051,10 +2370,24 @@ export default function NoxReach() {
             <div style={{ fontSize: 11, color: COLORS.textSecondary }}>{activeLeads.filter(l => l.stage !== "target").length} / {activeLeads.length} contacted</div>
             <button onClick={() => setShowResetConfirm(true)} style={{ background: "none", border: "none", color: COLORS.textMuted, fontSize: 10, cursor: "pointer", padding: 0 }}>reset</button>
           </div>
+        {/* User info + sign out */}
+          <div style={{ marginTop: 12, paddingTop: 12, borderTop: `1px solid ${COLORS.border}`, display: "flex", alignItems: "center", gap: 8 }}>
+            <div style={{ width: 28, height: 28, borderRadius: 8, background: COLORS.purpleBg, border: `1px solid ${COLORS.border}`, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 11, fontWeight: 700, color: COLORS.purpleLight, flexShrink: 0 }}>
+              {userName.charAt(0).toUpperCase()}
+            </div>
+            <div style={{ flex: 1, minWidth: 0 }}>
+              <div style={{ fontSize: 11, fontWeight: 600, color: COLORS.text, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{userName}</div>
+              <div style={{ fontSize: 9, color: COLORS.textMuted, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{userEmail}</div>
+            </div>
+            <button onClick={handleSignOut} title="Sign out" style={{ background: "none", border: "none", cursor: "pointer", color: COLORS.textMuted, fontSize: 14, padding: 4, borderRadius: 6, transition: "color 0.15s" }}
+              onMouseEnter={e => e.target.style.color = COLORS.red}
+              onMouseLeave={e => e.target.style.color = COLORS.textMuted}
+            >⏻</button>
+          </div>
         </div>
       </div>
 
-      {/* Main */}
+      {/* Main */}}
       <div style={{ marginLeft: 220, display: "flex", flexDirection: "column", minHeight: "100vh" }}>
         {/* Header */}
         <div style={{ padding: "20px 28px", borderBottom: `1px solid ${COLORS.border}`, background: COLORS.surface, position: "sticky", top: 0, zIndex: 50 }}>
@@ -2119,5 +2452,16 @@ export default function NoxReach() {
         </div>
       </div>
     </div>
+  );
+}
+
+// ── Export default: wraps everything in AuthGate ──────────────────────────────
+export default function NoxReach() {
+  return (
+    <AuthGate>
+      {({ user, session, supabase }) => (
+        <NoxReachApp user={user} session={session} supabase={supabase} />
+      )}
+    </AuthGate>
   );
 }
