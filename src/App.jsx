@@ -337,24 +337,12 @@ const TEMPLATES = [
   { id: "leverage", label: "Leverage", tone: "Warm connection",          icon: "◉", text: `Hey [Name],\n\n[Mutual contact] suggested I reach out — they thought my sound and your events would align.\n\nI play peak-hour Tech House and tribal circuit sets. I've been [recent gig/achievement] and would love to explore what a booking might look like.\n\nLet me know if you'd like a mix or EPK.\n\n— GEEZ` },
 ];
 
-const INITIAL_LEADS = [
-  { id: 1, name: "Tresor Berlin",       contact: "booking@tresor.de",       instagram: "@tresorberlin",    tier: "A1", tag: "Tech-House", stage: "target",    notes: "Legendary Berlin venue. Monday nights.",      followUpDate: null,         lastContact: null },
-  { id: 2, name: "Fabric London",       contact: "bookings@fabriclondon.com",instagram: "@fabriclondon",    tier: "A1", tag: "Disco",      stage: "contacted", notes: "Room 1 focus. Sent initial email.",           followUpDate: "2025-01-20", lastContact: "2025-01-15" },
-  { id: 3, name: "Output NYC",          contact: "info@outputclub.com",      instagram: "@outputclub",      tier: "A2", tag: "Tech-House", stage: "followup1", notes: "No reply to first email. Follow up.",         followUpDate: "2025-01-18", lastContact: "2025-01-10" },
-  { id: 4, name: "The BPM Festival",    contact: "artists@bpmfestival.com",  instagram: "@bpmfestival",     tier: "A2", tag: "Festival",   stage: "replied",   notes: "They asked for mix + EPK. Sent.",             followUpDate: null,         lastContact: "2025-01-14" },
-  { id: 5, name: "Alegria NYC",         contact: "booking@alegrianyc.com",   instagram: "@alegrainyc",      tier: "A2", tag: "Disco",      stage: "booked",    notes: "Confirmed March 15th. ✓",                    followUpDate: null,         lastContact: "2025-01-12" },
-  { id: 6, name: "De School Amsterdam", contact: "booking@deschool.nl",      instagram: "@deschool_ams",    tier: "A1", tag: "Tech-House", stage: "target",    notes: "Intimate venue. Very selective.",             followUpDate: null,         lastContact: null },
-  { id: 7, name: "Club Space Miami",    contact: "booking@clubspace.com",    instagram: "@clubspace_miami", tier: "A2", tag: "Disco",      stage: "followup2", notes: "2nd follow-up today. Last attempt.",          followUpDate: "2025-01-19", lastContact: "2025-01-05" },
-];
+const INITIAL_LEADS = []; // New users start with empty pipeline
 
 const TIER_COLORS = { A1: COLORS.gold, A2: COLORS.purple, A3: COLORS.textSecondary };
 
-const STORAGE_KEY      = "noxreach_leads_v1";
-const STORAGE_KEY_GIGS = "noxreach_gigs_v1";
-function loadLeads() { try { const r = localStorage.getItem(STORAGE_KEY); if (r) return JSON.parse(r); } catch {} return INITIAL_LEADS; }
-function saveLeads(leads) { try { localStorage.setItem(STORAGE_KEY, JSON.stringify(leads)); } catch {} }
-function loadGigs() { try { const r = localStorage.getItem(STORAGE_KEY_GIGS); if (r) return JSON.parse(r); } catch {} return INITIAL_GIGS; }
-function saveGigs(gigs) { try { localStorage.setItem(STORAGE_KEY_GIGS, JSON.stringify(gigs)); } catch {} }
+// Leads + Gigs now live in Supabase (per user), not localStorage
+// localStorage kept only for settings, pro status, tags
 
 const STORAGE_KEY_SETTINGS = "noxreach_settings_v1";
 const DEFAULT_SETTINGS = { followup1Days: 5, followup2Days: 14 };
@@ -380,13 +368,7 @@ function saveCustomTags(t) { try { localStorage.setItem(STORAGE_KEY_TAGS, JSON.s
 // Build a date string relative to today for sample data
 const relDate = (daysFromNow) => { const d = new Date(); d.setDate(d.getDate() + daysFromNow); return d.toISOString().split("T")[0]; };
 
-const INITIAL_GIGS = [
-  { id: 101, venue: "Alegria NYC",         city: "New York, US",    date: relDate(24),  status: "confirmed", fee: "€800",  tag: "Disco",      notes: "Opening set, 1am–3am. Rider sent." },
-  { id: 102, venue: "Club Space Miami",    city: "Miami, US",       date: relDate(38),  status: "pending",   fee: "€600",  tag: "Disco",      notes: "Awaiting contract confirmation." },
-  { id: 103, venue: "The BPM Festival",    city: "Playa del Carmen",date: relDate(55),  status: "confirmed", fee: "€1200", tag: "Festival",   notes: "Terrace stage, sunset slot." },
-  { id: 104, venue: "Fabric London",       city: "London, UK",      date: relDate(72),  status: "pending",   fee: "€700",  tag: "Disco",      notes: "Room 2, still negotiating." },
-  { id: 105, venue: "Output NYC",          city: "New York, US",    date: relDate(-14), status: "confirmed", fee: "€500",  tag: "Tech-House", notes: "Went well. Good crowd." },
-];
+const INITIAL_GIGS = []; // New users start with empty calendar
 
 // ─── Primitives ──────────────────────────────────────────────────────────────
 
@@ -1693,7 +1675,7 @@ function SettingsView({ settings, onSave, isPro, onUpgradeClick, customTags, def
 
 // ─── Gig Calendar ─────────────────────────────────────────────────────────────
 
-function GigCalendarView({ leads, gigs, setGigs, showToast, isPro, onUpgradeClick, customTags, TAG_COLORS }) {
+function GigCalendarView({ leads, gigs, setGigs, showToast, isPro, onUpgradeClick, customTags, TAG_COLORS, supabase, userId }) {
   const today    = new Date();
   const [viewYear,  setViewYear]  = useState(today.getFullYear());
   const [viewMonth, setViewMonth] = useState(today.getMonth());
@@ -1719,20 +1701,29 @@ function GigCalendarView({ leads, gigs, setGigs, showToast, isPro, onUpgradeClic
   const prevMonth = () => { if (viewMonth === 0) { setViewMonth(11); setViewYear(y => y - 1); } else setViewMonth(m => m - 1); };
   const nextMonth = () => { if (viewMonth === 11) { setViewMonth(0); setViewYear(y => y + 1); } else setViewMonth(m => m + 1); };
 
-  const addGig = () => {
+  const addGig = async () => {
     if (!addForm.venue || !addForm.date) return;
     if (!isPro && gigs.length >= FREE_LIMITS.gigs) { onUpgradeClick("gigs"); return; }
-    const gig = { ...addForm, id: Date.now() };
-    setGigs(prev => [...prev, gig]);
-    showToast(`${gig.venue} added to calendar`, "success");
-    setShowAdd(false);
-    setAddForm({ venue: "", city: "", date: "", status: "confirmed", fee: "", tag: "Tech-House", notes: "" });
+    try {
+      const { data, error } = await supabase.from("gigs").insert([gigToDb({ ...addForm }, userId)]).select().single();
+      if (error) throw error;
+      setGigs(prev => [...prev, dbToGig(data)]);
+      showToast(`${addForm.venue} added to calendar`, "success");
+      setShowAdd(false);
+      setAddForm({ venue: "", city: "", date: "", status: "confirmed", fee: "", tag: "Tech-House", notes: "" });
+    } catch (err) {
+      showToast("Failed to save gig. Try again.", "info");
+      console.error(err);
+    }
   };
 
-  const deleteGig = (id) => {
+  const deleteGig = async (id) => {
     setGigs(prev => prev.filter(g => g.id !== id));
     setSelected(null);
     showToast("Gig removed", "info");
+    try {
+      await supabase.from("gigs").delete().eq("id", id).eq("user_id", userId);
+    } catch (err) { console.error("deleteGig sync failed:", err); }
   };
 
   const upcoming = gigs.filter(g => new Date(g.date) >= today).sort((a, b) => new Date(a.date) - new Date(b.date));
@@ -2138,6 +2129,65 @@ function ReplyHubView({ leads, onMove, showToast, TAG_COLORS }) {
   );
 }
 
+
+// ── DB ↔ App data converters ──────────────────────────────────────────────────
+function dbToLead(r) {
+  return {
+    id:            r.id,
+    name:          r.name || "",
+    contact:       r.contact || "",
+    instagram:     r.instagram || "",
+    tier:          r.tier || "A2",
+    tag:           r.tag || "Tech-House",
+    stage:         r.stage || "target",
+    notes:         r.notes || "",
+    followUpDate:  r.follow_up_date || null,
+    lastContact:   r.last_contact || null,
+    archived:      r.archived || false,
+  };
+}
+function leadToDb(lead, userId) {
+  return {
+    id:             typeof lead.id === "number" ? undefined : lead.id, // let DB generate uuid for new
+    user_id:        userId,
+    name:           lead.name,
+    contact:        lead.contact || "",
+    instagram:      lead.instagram || "",
+    tier:           lead.tier || "A2",
+    tag:            lead.tag || "Tech-House",
+    stage:          lead.stage || "target",
+    notes:          lead.notes || "",
+    follow_up_date: lead.followUpDate || null,
+    last_contact:   lead.lastContact || null,
+    archived:       lead.archived || false,
+  };
+}
+function dbToGig(r) {
+  return {
+    id:     r.id,
+    venue:  r.venue || "",
+    city:   r.city || "",
+    date:   r.date || "",
+    status: r.status || "pending",
+    fee:    r.fee || "",
+    tag:    r.tag || "",
+    notes:  r.notes || "",
+  };
+}
+function gigToDb(gig, userId) {
+  return {
+    id:      typeof gig.id === "number" ? undefined : gig.id,
+    user_id: userId,
+    venue:   gig.venue,
+    city:    gig.city || "",
+    date:    gig.date || null,
+    status:  gig.status || "pending",
+    fee:     gig.fee || "",
+    tag:     gig.tag || "",
+    notes:   gig.notes || "",
+  };
+}
+
 function NoxReachApp({ user, session, supabase }) {
   const userEmail = user?.email || "";
   const userName  = user?.user_metadata?.full_name || userEmail.split("@")[0] || "DJ";
@@ -2147,12 +2197,34 @@ function NoxReachApp({ user, session, supabase }) {
   };
 
   const [activeTab, setActiveTab]       = useState("pipeline");
-  const [leads, setLeads]               = useState(() => loadLeads());
-  const [gigs,  setGigs]                = useState(() => loadGigs());
+  const [leads, setLeads]               = useState([]);
+  const [gigs,  setGigs]                = useState([]);
+  const [dataLoading, setDataLoading]   = useState(true);
   const [settings, setSettings]         = useState(() => loadSettings());
   const [isPro, setIsPro]               = useState(() => loadIsPro());
   const [upgradeModal, setUpgradeModal] = useState(null);
   const [customTags, setCustomTags]     = useState(() => loadCustomTags());
+
+  // ── Load user's leads + gigs from Supabase on mount ─────────────────────
+  useEffect(() => {
+    if (!user?.id) return;
+    const loadData = async () => {
+      setDataLoading(true);
+      try {
+        const [leadsRes, gigsRes] = await Promise.all([
+          supabase.from("leads").select("*").eq("user_id", user.id).order("created_at", { ascending: false }),
+          supabase.from("gigs").select("*").eq("user_id", user.id).order("date", { ascending: true }),
+        ]);
+        if (leadsRes.data) setLeads(leadsRes.data.map(dbToLead));
+        if (gigsRes.data)  setGigs(gigsRes.data.map(dbToGig));
+      } catch (err) {
+        console.error("Failed to load data:", err);
+      } finally {
+        setDataLoading(false);
+      }
+    };
+    loadData();
+  }, [user?.id]);
 
   // Derived — always up to date with customTags
   const TAG_COLORS = Object.fromEntries(customTags.map(t => [t, tagColor(t)]));
@@ -2181,20 +2253,26 @@ function NoxReachApp({ user, session, supabase }) {
   const [search,  setSearch]  = useState("");
   const [filters, setFilters] = useState({ tier: null, tag: null, stage: null });
 
-  useEffect(() => { saveLeads(leads); }, [leads]);
-  useEffect(() => { saveGigs(gigs); },  [gigs]);
+  // Leads + gigs are saved to Supabase on each mutation (see addLead, moveLead, etc.)
 
   const showToast = (msg, type = "info") => { setToast({ msg, type }); setTimeout(() => setToast(null), 3200); };
 
   const handleUpgrade = () => { setIsPro(true); saveIsPro(true); setUpgradeModal(null); showToast("🎉 Welcome to Pro! All features unlocked.", "success"); };
   const requestUpgrade = (reason) => setUpgradeModal(reason);
 
-  const addLead = (lead) => {
+  const addLead = async (lead) => {
     const activeCount = leads.filter(l => !l.archived).length;
     if (!isPro && activeCount >= FREE_LIMITS.leads) { requestUpgrade("leads"); return; }
-    setLeads(prev => [lead, ...prev]);
-    setActiveTab("pipeline");
-    showToast(`${lead.name} added to pipeline`, "success");
+    try {
+      const { data, error } = await supabase.from("leads").insert([leadToDb(lead, user.id)]).select().single();
+      if (error) throw error;
+      setLeads(prev => [dbToLead(data), ...prev]);
+      setActiveTab("pipeline");
+      showToast(`${lead.name} added to pipeline`, "success");
+    } catch (err) {
+      showToast("Failed to save lead. Try again.", "info");
+      console.error(err);
+    }
   };
 
   const getAutoFollowUpDate = (newStage) => {
@@ -2219,38 +2297,70 @@ function NoxReachApp({ user, session, supabase }) {
     showToast("Settings saved", "success");
   };
 
-  const moveLead = (leadId, newStage) => {
-    // Gate auto-scheduling for free users — still allow stage move, just no auto date
-    if (!isPro && ["contacted","followup1","followup2"].includes(newStage)) {
-      // Allow the move but show upgrade nudge for scheduling
-      const today = new Date().toISOString().split("T")[0];
-      setLeads(prev => prev.map(l => l.id === leadId ? { ...l, stage: newStage, lastContact: today } : l));
-      if (selectedLead?.id === leadId) setSelectedLead(prev => ({ ...prev, stage: newStage, lastContact: today }));
-      showToast("Stage updated · Auto-scheduling is a Pro feature", "info");
-      return;
-    }
-    const today   = new Date().toISOString().split("T")[0];
-    const autoDate = getAutoFollowUpDate(newStage);
-    const update  = l => ({ ...l, stage: newStage, lastContact: ["contacted","followup1","followup2"].includes(newStage) ? today : l.lastContact, followUpDate: autoDate !== undefined ? autoDate : l.followUpDate });
+  const moveLead = async (leadId, newStage) => {
+    const today    = new Date().toISOString().split("T")[0];
+    const autoDate = (!isPro && ["contacted","followup1","followup2"].includes(newStage)) ? null : getAutoFollowUpDate(newStage);
+    const update   = l => ({ ...l, stage: newStage, lastContact: ["contacted","followup1","followup2"].includes(newStage) ? today : l.lastContact, followUpDate: autoDate !== undefined ? autoDate : l.followUpDate });
+    // Optimistic UI update
     setLeads(prev => prev.map(l => l.id === leadId ? update(l) : l));
     if (selectedLead?.id === leadId) setSelectedLead(prev => update(prev));
-    if (FOLLOWUP_MESSAGES[newStage]) showToast(FOLLOWUP_MESSAGES[newStage], ["booked","replied"].includes(newStage) ? "success" : "schedule");
+    if (!isPro && ["contacted","followup1","followup2"].includes(newStage)) {
+      showToast("Stage updated · Auto-scheduling is a Pro feature", "info");
+    } else if (FOLLOWUP_MESSAGES[newStage]) {
+      showToast(FOLLOWUP_MESSAGES[newStage], ["booked","replied"].includes(newStage) ? "success" : "schedule");
+    }
+    // Persist to Supabase
+    try {
+      const updated = update(leads.find(l => l.id === leadId) || {});
+      await supabase.from("leads").update({
+        stage: newStage,
+        last_contact: updated.lastContact,
+        follow_up_date: updated.followUpDate,
+      }).eq("id", leadId).eq("user_id", user.id);
+    } catch (err) { console.error("moveLead sync failed:", err); }
   };
 
-  const archiveLead = (leadId) => {
+  const archiveLead = async (leadId) => {
     const lead = leads.find(l => l.id === leadId);
     const nowArchived = !lead?.archived;
     setLeads(prev => prev.map(l => l.id === leadId ? { ...l, archived: nowArchived } : l));
     showToast(nowArchived ? "Lead archived" : "Lead restored to pipeline", nowArchived ? "info" : "success");
+    try {
+      await supabase.from("leads").update({ archived: nowArchived }).eq("id", leadId).eq("user_id", user.id);
+    } catch (err) { console.error("archiveLead sync failed:", err); }
   };
 
-  const deleteLead = (leadId) => {
+  const deleteLead = async (leadId) => {
     const lead = leads.find(l => l.id === leadId);
     setLeads(prev => prev.filter(l => l.id !== leadId));
     showToast(`${lead?.name || "Lead"} deleted`, "info");
+    try {
+      await supabase.from("leads").delete().eq("id", leadId).eq("user_id", user.id);
+    } catch (err) { console.error("deleteLead sync failed:", err); }
   };
 
-  const resetData = () => { setLeads(INITIAL_LEADS); setGigs(INITIAL_GIGS); setSelectedLead(null); setShowResetConfirm(false); setSearch(""); setFilters({ tier: null, tag: null, stage: null }); showToast("Pipeline reset to sample data", "info"); };
+  const resetData = async () => {
+    setLeads([]); setGigs([]); setSelectedLead(null);
+    setShowResetConfirm(false); setSearch(""); setFilters({ tier: null, tag: null, stage: null });
+    showToast("Pipeline cleared", "info");
+    try {
+      await Promise.all([
+        supabase.from("leads").delete().eq("user_id", user.id),
+        supabase.from("gigs").delete().eq("user_id", user.id),
+      ]);
+    } catch (err) { console.error("resetData sync failed:", err); }
+  };
+
+  // ── Loading screen while fetching user data ────────────────────────────────
+  if (dataLoading) {
+    return (
+      <div style={{ minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", background: "#060608", flexDirection: "column", gap: 16 }}>
+        <style>{`@keyframes spin { from{transform:rotate(0deg)} to{transform:rotate(360deg)} }`}</style>
+        <div style={{ width: 36, height: 36, border: "2px solid #1c1c2e", borderTopColor: "#6B2FD4", borderRadius: "50%", animation: "spin 0.7s linear infinite" }} />
+        <div style={{ fontSize: 11, color: "#50506a", letterSpacing: "0.12em" }}>LOADING YOUR PIPELINE</div>
+      </div>
+    );
+  }
 
   const dueCount     = leads.filter(l => !l.archived && l.followUpDate && new Date(l.followUpDate) <= new Date()).length;
   const repliedCount = leads.filter(l => !l.archived && (l.stage === "replied" || l.stage === "booked")).length;
@@ -2446,7 +2556,7 @@ function NoxReachApp({ user, session, supabase }) {
           {activeTab === "followups" && <FollowUpsView leads={leads} onNavigate={setActiveTab} />}
           {activeTab === "outreach"  && <OutreachView isPro={isPro} onUpgradeClick={requestUpgrade} />}
           {activeTab === "assets"    && <AssetsView />}
-          {activeTab === "calendar"  && <GigCalendarView leads={leads} gigs={gigs} setGigs={setGigs} showToast={showToast} isPro={isPro} onUpgradeClick={requestUpgrade} customTags={customTags} TAG_COLORS={TAG_COLORS} />}
+          {activeTab === "calendar"  && <GigCalendarView leads={leads} gigs={gigs} setGigs={setGigs} showToast={showToast} isPro={isPro} onUpgradeClick={requestUpgrade} customTags={customTags} TAG_COLORS={TAG_COLORS} supabase={supabase} userId={user.id} />}
           {activeTab === "replyhub"  && <ReplyHubView leads={leads} onMove={moveLead} showToast={showToast} TAG_COLORS={TAG_COLORS} />}
           {activeTab === "settings"  && <SettingsView settings={settings} onSave={saveSettingsHandler} isPro={isPro} onUpgradeClick={requestUpgrade} customTags={customTags} defaultTags={DEFAULT_TAGS} onAddTag={addCustomTag} onRemoveTag={removeCustomTag} />}
         </div>
