@@ -2336,7 +2336,7 @@ function NoxReachApp({ user, session, supabase }) {
     setLeads(prev => prev.filter(l => l.id !== leadId));
     showToast(`${lead?.name || "Lead"} deleted`, "info");
     try {
-      await supabase.from("leads").delete().eq("id" leadId).eq("user_id", user.id);
+      await supabase.from("leads").delete().eq("id", leadId).eq("user_id", user.id);
     } catch (err) { console.error("deleteLead sync failed:", err); }
   };
 
