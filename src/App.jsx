@@ -661,111 +661,233 @@ function PipelineView({ leads, onMove, onSelect, selectedLead, onArchive, search
 
 // ─── Lead Detail ──────────────────────────────────────────────────────────────
 
-function LeadDetail({ lead, onClose, onMove, onArchive, onDelete, TAG_COLORS }) {
-  if (!lead) return null;
-  const [confirmDelete, setConfirmDelete] = useState(false);
-  const today = new Date();
-  const followUpDate = lead.followUpDate ? new Date(lead.followUpDate) : null;
-  const isOverdue  = followUpDate && followUpDate <= today;
-  const daysUntil  = followUpDate ? Math.ceil((followUpDate - today) / (1000 * 60 * 60 * 24)) : null;
+function LeadDetail({ lead, onClose, onMove, onArchive, onDelete, supabase, userId, onUpdate, TAG_COLORS }) {
+  const [editing, setEditing] = useState(false);
+  const [form, setForm] = useState({
+    name: lead.name || "",
+    contact: lead.contact || "",
+    instagram: lead.instagram || "",
+    notes: lead.notes || "",
+    follow_up_date: lead.follow_up_date || "",
+  });
+  const [saving, setSaving] = useState(false);
 
-  const STAGE_HINTS = {
-    target:    { next: "contacted", label: "Mark as Contacted",  hint: "Follow-up reminder in 5 days" },
-    contacted: { next: "followup1", label: "Send Follow-up 1",   hint: "Reminder auto-set for +5 days" },
-    followup1: { next: "followup2", label: "Send Follow-up 2",   hint: "Last reminder auto-set for +14 days" },
-    followup2: { next: "replied",   label: "They Replied!",      hint: "Move to replied — no more reminders" },
-    replied:   { next: "booked",    label: "Confirm Booking ✓",  hint: "Lock it in" },
+  // Keep form in sync if lead changes (switching cards)
+  useEffect(() => {
+    setForm({
+      name: lead.name || "",
+      contact: lead.contact || "",
+      instagram: lead.instagram || "",
+      notes: lead.notes || "",
+      follow_up_date: lead.follow_up_date || "",
+    });
+    setEditing(false);
+  }, [lead.id]);
+
+  const stageIndex = STAGES.findIndex(s => s.id === lead.stage);
+  const isOverdue = lead.followUpDate && new Date(lead.followUpDate) <= new Date();
+
+  const handleSave = async () => {
+    setSaving(true);
+    try {
+      const updates = {
+        name: form.name.trim(),
+        contact: form.contact.trim(),
+        instagram: form.instagram.trim(),
+        notes: form.notes.trim(),
+        follow_up_date: form.follow_up_date || null,
+      };
+      const { error } = await supabase
+        .from("leads")
+        .update(updates)
+        .eq("id", lead.id)
+        .eq("user_id", userId);
+      if (!error) {
+        onUpdate({ ...lead, ...updates });
+        setEditing(false);
+      }
+    } catch (e) {
+      console.error("Save failed:", e);
+    }
+    setSaving(false);
   };
-  const hint = STAGE_HINTS[lead.stage];
+
+  const inputStyle = {
+    width: "100%",
+    background: COLORS.bg,
+    border: `1px solid ${COLORS.border}`,
+    borderRadius: 6,
+    padding: "6px 10px",
+    color: COLORS.text,
+    fontSize: 12,
+    fontFamily: "'DM Sans', sans-serif",
+    outline: "none",
+    marginTop: 3,
+  };
+
+  const labelStyle = {
+    fontSize: 10,
+    color: COLORS.textMuted,
+    letterSpacing: "0.08em",
+    textTransform: "uppercase",
+    marginTop: 12,
+  };
 
   return (
-    <div style={{ background: COLORS.surface, border: `1px solid ${COLORS.border}`, borderRadius: 14, padding: 24, position: "sticky", top: 0 }}>
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 20 }}>
-        <div>
-          <div style={{ fontSize: 16, fontWeight: 800, color: COLORS.text, marginBottom: 4 }}>{lead.name}</div>
-          <div style={{ display: "flex", gap: 6 }}>
-            <Badge color={TIER_COLORS[lead.tier]}>{lead.tier}</Badge>
-            <Badge color={TAG_COLORS[lead.tag] || COLORS.textSecondary}>{lead.tag}</Badge>
-            {lead.archived && <Badge color={COLORS.textMuted}>Archived</Badge>}
-          </div>
+    <div style={{
+      width: 280,
+      borderLeft: `1px solid ${COLORS.border}`,
+      background: COLORS.surface,
+      display: "flex",
+      flexDirection: "column",
+      padding: "14px 16px",
+      overflowY: "auto",
+      flexShrink: 0,
+    }}>
+      {/* Header */}
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 10 }}>
+        <div style={{ flex: 1, minWidth: 0 }}>
+          {editing ? (
+            <input
+              value={form.name}
+              onChange={e => setForm(f => ({ ...f, name: e.target.value }))}
+              style={{ ...inputStyle, fontSize: 14, fontWeight: 700, marginTop: 0 }}
+              autoFocus
+            />
+          ) : (
+            <div style={{ fontSize: 14, fontWeight: 700, color: COLORS.text, lineHeight: 1.3 }}>{lead.name}</div>
+          )}
+          <Badge color={TIER_COLORS[lead.tier]} style={{ marginTop: 4 }}>{lead.tier}</Badge>
+          {lead.tag && <Badge color={TAG_COLORS?.[lead.tag] || COLORS.purple} style={{ marginTop: 4, marginLeft: 4 }}>{lead.tag}</Badge>}
         </div>
-        <button onClick={onClose} style={{ background: "none", border: "none", color: COLORS.textSecondary, cursor: "pointer", fontSize: 18, lineHeight: 1 }}>×</button>
+        <div style={{ display: "flex", gap: 6, flexShrink: 0, marginLeft: 8 }}>
+          {editing ? (
+            <>
+              <button
+                onClick={handleSave}
+                disabled={saving}
+                style={{ fontSize: 11, padding: "4px 10px", background: COLORS.purple, color: "#fff", border: "none", borderRadius: 6, cursor: "pointer", fontWeight: 600 }}
+              >
+                {saving ? "…" : "Save"}
+              </button>
+              <button
+                onClick={() => { setEditing(false); setForm({ name: lead.name || "", contact: lead.contact || "", instagram: lead.instagram || "", notes: lead.notes || "", follow_up_date: lead.follow_up_date || "" }); }}
+                style={{ fontSize: 11, padding: "4px 8px", background: "transparent", color: COLORS.textMuted, border: `1px solid ${COLORS.border}`, borderRadius: 6, cursor: "pointer" }}
+              >
+                Cancel
+              </button>
+            </>
+          ) : (
+            <button
+              onClick={() => setEditing(true)}
+              style={{ fontSize: 11, padding: "4px 10px", background: "transparent", color: COLORS.textSecondary, border: `1px solid ${COLORS.border}`, borderRadius: 6, cursor: "pointer" }}
+            >
+              Edit
+            </button>
+          )}
+          <button
+            onClick={onClose}
+            style={{ background: "none", border: "none", color: COLORS.textMuted, cursor: "pointer", fontSize: 16, lineHeight: 1, padding: "2px 4px" }}
+          >×</button>
+        </div>
       </div>
 
-      {followUpDate && !lead.archived && (
-        <div style={{ marginBottom: 16, padding: "12px 14px", borderRadius: 10, background: isOverdue ? COLORS.gold + "18" : COLORS.purpleBg, border: `1px solid ${isOverdue ? COLORS.gold + "55" : COLORS.purpleDim}`, display: "flex", alignItems: "center", gap: 10 }}>
-          <span style={{ fontSize: 16 }}>{isOverdue ? "⏰" : "📅"}</span>
-          <div>
-            <div style={{ fontSize: 12, fontWeight: 700, color: isOverdue ? COLORS.gold : COLORS.purpleLight }}>
-              {isOverdue ? "Follow-up overdue" : daysUntil === 0 ? "Follow up today" : `Follow up in ${daysUntil} day${daysUntil !== 1 ? "s" : ""}`}
-            </div>
-            <div style={{ fontSize: 11, color: COLORS.textSecondary, marginTop: 2, fontFamily: "'DM Mono', monospace" }}>{lead.followUpDate}</div>
-          </div>
+      {/* Follow-up overdue badge */}
+      {isOverdue && !lead.archived && (
+        <div style={{ background: COLORS.gold + "22", border: `1px solid ${COLORS.gold}44`, borderRadius: 8, padding: "6px 10px", marginBottom: 10 }}>
+          <div style={{ fontSize: 11, color: COLORS.gold, fontWeight: 600 }}>Follow-up overdue</div>
+          <div style={{ fontSize: 10, color: COLORS.textMuted }}>{lead.follow_up_date}</div>
         </div>
       )}
 
-      {hint && !lead.archived && (
-        <button onClick={() => onMove(lead.id, hint.next)} style={{ width: "100%", padding: "12px 16px", borderRadius: 10, cursor: "pointer", marginBottom: 16, background: `linear-gradient(135deg, ${COLORS.purple}44, ${COLORS.purpleLight}22)`, border: `1px solid ${COLORS.purple}88`, textAlign: "left", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-          <div>
-            <div style={{ fontSize: 13, fontWeight: 700, color: COLORS.purpleLight }}>{hint.label}</div>
-            <div style={{ fontSize: 11, color: COLORS.textSecondary, marginTop: 2 }}>{hint.hint}</div>
-          </div>
-          <span style={{ fontSize: 18, color: COLORS.purple }}>→</span>
+      {/* Mark as Contacted */}
+      {!lead.archived && lead.stage === "target" && (
+        <button
+          onClick={() => onMove(lead.id, "contacted")}
+          style={{ width: "100%", padding: "8px 0", background: COLORS.purple, color: "#fff", border: "none", borderRadius: 8, cursor: "pointer", fontSize: 12, fontWeight: 600, marginBottom: 12 }}
+        >
+          Mark as Contacted
+          <div style={{ fontSize: 10, fontWeight: 400, opacity: 0.8 }}>Follow-up reminder in 5 days</div>
         </button>
       )}
 
-      <div style={{ display: "flex", flexDirection: "column", gap: 10, marginBottom: 16 }}>
-        {[["Email", lead.contact], ["Instagram", lead.instagram], ["Last Contact", lead.lastContact || "Never"]].map(([k, v]) => v ? (
-          <div key={k} style={{ display: "flex", justifyContent: "space-between" }}>
-            <span style={{ fontSize: 11, color: COLORS.textSecondary, letterSpacing: "0.06em", textTransform: "uppercase" }}>{k}</span>
-            <span style={{ fontSize: 12, color: COLORS.text, fontFamily: k === "Email" ? "'DM Mono', monospace" : "inherit" }}>{v}</span>
-          </div>
-        ) : null)}
-      </div>
+      {/* Fields */}
+      <div style={{ fontSize: 10, color: COLORS.textMuted, letterSpacing: "0.08em", textTransform: "uppercase", marginBottom: 6 }}>Contact Info</div>
 
-      {lead.notes && (
-        <div style={{ background: COLORS.bg, border: `1px solid ${COLORS.border}`, borderRadius: 8, padding: "12px 14px", fontSize: 12, color: COLORS.textSecondary, lineHeight: 1.6, marginBottom: 16 }}>
-          {lead.notes}
-        </div>
+      <div style={labelStyle}>Email</div>
+      {editing ? (
+        <input value={form.contact} onChange={e => setForm(f => ({ ...f, contact: e.target.value }))} style={inputStyle} placeholder="booking@venue.com" />
+      ) : (
+        <div style={{ fontSize: 12, color: COLORS.text, marginTop: 3 }}>{lead.contact || <span style={{ color: COLORS.textMuted }}>—</span>}</div>
       )}
 
-      {!lead.archived && (
-        <div style={{ display: "flex", flexDirection: "column", gap: 6, marginBottom: 16 }}>
-          <div style={{ fontSize: 10, color: COLORS.textMuted, letterSpacing: "0.1em", textTransform: "uppercase", marginBottom: 4 }}>All Stages</div>
-          {STAGES.map(s => (
-            <button key={s.id} onClick={() => onMove(lead.id, s.id)} style={{ padding: "8px 12px", borderRadius: 8, textAlign: "left", cursor: "pointer", background: lead.stage === s.id ? COLORS.purpleBg : "transparent", border: `1px solid ${lead.stage === s.id ? COLORS.purple : COLORS.border}`, color: lead.stage === s.id ? COLORS.purpleLight : COLORS.textSecondary, fontSize: 12, fontWeight: lead.stage === s.id ? 700 : 400, display: "flex", alignItems: "center", gap: 8 }}>
-              <div style={{ width: 6, height: 6, borderRadius: "50%", background: s.color }} />
-              {s.label}
-              {lead.stage === s.id && <span style={{ marginLeft: "auto", fontSize: 10 }}>◀ current</span>}
-            </button>
-          ))}
-        </div>
+      <div style={labelStyle}>Instagram</div>
+      {editing ? (
+        <input value={form.instagram} onChange={e => setForm(f => ({ ...f, instagram: e.target.value }))} style={inputStyle} placeholder="https://instagram.com/venue" />
+      ) : (
+        <div style={{ fontSize: 12, color: COLORS.text, marginTop: 3, wordBreak: "break-all" }}>{lead.instagram || <span style={{ color: COLORS.textMuted }}>—</span>}</div>
       )}
 
-      <div style={{ borderTop: `1px solid ${COLORS.border}`, paddingTop: 14, display: "flex", flexDirection: "column", gap: 8 }}>
-        {!confirmDelete ? (
-          <>
-            <button onClick={() => { onArchive(lead.id); onClose(); }} style={{ width: "100%", padding: "9px 14px", borderRadius: 9, cursor: "pointer", textAlign: "left", background: "transparent", border: `1px solid ${COLORS.border}`, color: COLORS.textSecondary, fontSize: 12, fontWeight: 600, display: "flex", alignItems: "center", gap: 8 }}>
-              <span>{lead.archived ? "↩" : "◻"}</span>
-              {lead.archived ? "Restore to pipeline" : "Archive lead"}
-            </button>
-            <button onClick={() => setConfirmDelete(true)} style={{ width: "100%", padding: "9px 14px", borderRadius: 9, cursor: "pointer", textAlign: "left", background: "transparent", border: `1px solid ${COLORS.border}`, color: COLORS.red + "AA", fontSize: 12, fontWeight: 600, display: "flex", alignItems: "center", gap: 8 }}>
-              <span>✕</span> Delete permanently
-            </button>
-          </>
+      <div style={labelStyle}>Follow-up Date</div>
+      {editing ? (
+        <input type="date" value={form.follow_up_date} onChange={e => setForm(f => ({ ...f, follow_up_date: e.target.value }))} style={inputStyle} />
+      ) : (
+        <div style={{ fontSize: 12, color: COLORS.text, marginTop: 3 }}>{lead.follow_up_date || <span style={{ color: COLORS.textMuted }}>Not set</span>}</div>
+      )}
+
+      <div style={labelStyle}>Last Contact</div>
+      <div style={{ fontSize: 12, color: COLORS.text, marginTop: 3 }}>{lead.last_contact || <span style={{ color: COLORS.textMuted }}>Never</span>}</div>
+
+      {/* Notes */}
+      <div style={{ ...labelStyle, marginTop: 14 }}>Notes</div>
+      {editing ? (
+        <textarea
+          value={form.notes}
+          onChange={e => setForm(f => ({ ...f, notes: e.target.value }))}
+          style={{ ...inputStyle, minHeight: 72, resize: "vertical", marginTop: 3 }}
+          placeholder="Context, connections, vibe of the venue…"
+        />
+      ) : (
+        lead.notes ? (
+          <div style={{ background: COLORS.bg, border: `1px solid ${COLORS.border}`, borderRadius: 6, padding: "8px 10px", fontSize: 12, color: COLORS.text, marginTop: 3, lineHeight: 1.5 }}>{lead.notes}</div>
         ) : (
-          <div style={{ background: COLORS.red + "11", border: `1px solid ${COLORS.red}44`, borderRadius: 10, padding: "14px" }}>
-            <div style={{ fontSize: 12, color: COLORS.text, fontWeight: 600, marginBottom: 10 }}>Delete "{lead.name}"? This can't be undone.</div>
-            <div style={{ display: "flex", gap: 8 }}>
-              <button onClick={() => setConfirmDelete(false)} style={{ flex: 1, padding: "8px", background: "transparent", border: `1px solid ${COLORS.border}`, borderRadius: 7, color: COLORS.textSecondary, fontSize: 12, cursor: "pointer" }}>Cancel</button>
-              <button onClick={() => { onDelete(lead.id); onClose(); }} style={{ flex: 1, padding: "8px", background: COLORS.red + "22", border: `1px solid ${COLORS.red}66`, borderRadius: 7, color: COLORS.red, fontSize: 12, fontWeight: 700, cursor: "pointer" }}>Delete</button>
-            </div>
+          <div style={{ fontSize: 12, color: COLORS.textMuted, marginTop: 3 }}>—</div>
+        )
+      )}
+
+      {/* Stage tracker */}
+      <div style={{ fontSize: 10, color: COLORS.textMuted, letterSpacing: "0.08em", textTransform: "uppercase", marginTop: 16, marginBottom: 6 }}>All Stages</div>
+      {STAGES.map(s => (
+        <div key={s.id} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "5px 0", borderBottom: `1px solid ${COLORS.border}22` }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 7 }}>
+            <div style={{ width: 7, height: 7, borderRadius: "50%", background: s.color }} />
+            <div style={{ fontSize: 12, color: lead.stage === s.id ? COLORS.text : COLORS.textMuted, fontWeight: lead.stage === s.id ? 600 : 400 }}>{s.label}</div>
           </div>
-        )}
-      </div>
+          {lead.stage === s.id && <span style={{ fontSize: 10, color: COLORS.purple, fontWeight: 600 }}>← current</span>}
+        </div>
+      ))}
+
+      {/* Archive / Delete */}
+      {!lead.archived && (
+        <div style={{ marginTop: 16, display: "flex", flexDirection: "column", gap: 6 }}>
+          <button
+            onClick={() => onArchive(lead.id)}
+            style={{ fontSize: 11, padding: "6px 0", background: "transparent", color: COLORS.textMuted, border: `1px solid ${COLORS.border}`, borderRadius: 6, cursor: "pointer" }}
+          >
+            ☐ Archive lead
+          </button>
+          <button
+            onClick={() => onDelete(lead.id)}
+            style={{ fontSize: 11, padding: "6px 0", background: "transparent", color: COLORS.red, border: `1px solid ${COLORS.red}44`, borderRadius: 6, cursor: "pointer" }}
+          >
+            × Delete permanently
+          </button>
+        </div>
+      )}
     </div>
   );
 }
+
 
 // ─── Add Lead Modal ───────────────────────────────────────────────────────────
 
