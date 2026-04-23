@@ -898,7 +898,7 @@ function AddLeadModal({ onClose, onAdd, customTags, TAG_COLORS, onAddTag }) {
   const set = key => val  => setForm(f => ({ ...f, [key]: val }));
   const validateStep1 = () => { const e = {}; if (!form.name.trim()) e.name = "Venue name is required"; if (!form.contact.trim() && !form.instagram.trim()) e.contact = "Add at least one contact method"; setErrors(e); return !Object.keys(e).length; };
   const handleNext   = () => { if (validateStep1()) setStep(2); };
-  const handleSubmit = () => { onAdd({ ...form, id: Date.now(), followUpDate: null, lastContact: null }); onClose(); };
+    const handleSubmit = () => { onAdd({ ...form, id: crypto.randomUUID(), followUpDate: null, lastContact: null }); onClose(); };
 
   return (
     <div style={{ position: "fixed", inset: 0, zIndex: 1000, background: "rgba(0,0,0,0.8)", backdropFilter: "blur(6px)", display: "flex", alignItems: "center", justifyContent: "center" }} onClick={e => e.target === e.currentTarget && onClose()}>
