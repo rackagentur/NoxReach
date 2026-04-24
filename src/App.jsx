@@ -629,24 +629,29 @@ function PipelineView({ leads, onMove, onSelect, selectedLead, onArchive, search
         </div>
       ) : (
         <div style={{ display: "flex", gap: 12, overflowX: "auto", paddingBottom: 8 }}>
-          {STAGES.map(stage => {
-            // If stage filter is active, only show the matching column prominently
-            const isFiltered = filters.stage && filters.stage !== stage.id;
-            const stageLeads = activeLeads.filter(l => l.stage === stage.id);
+          {[
+            { id: "target",    label: "Target",    color: "#444444", stages: ["target"] },
+            { id: "contacted", label: "Contacted", color: "#7B3FE4", stages: ["contacted"] },
+            { id: "followup",  label: "Follow-up", color: "#9B5FFF", stages: ["followup1","followup2"] },
+            { id: "replied",   label: "Replied",   color: "#22C55E", stages: ["replied"] },
+            { id: "booked",    label: "Booked",    color: "#D4AF37", stages: ["booked"] },
+          ].map(col => {
+            const isFiltered = filters.stage && !col.stages.includes(filters.stage);
+            const colLeads = activeLeads.filter(l => col.stages.includes(l.stage));
             return (
-              <div key={stage.id} style={{ minWidth: 220, flex: 1, opacity: isFiltered ? 0.3 : 1, transition: "opacity 0.2s" }}>
+              <div key={col.id} style={{ minWidth: 220, flex: 1, opacity: isFiltered ? 0.3 : 1, transition: "opacity 0.2s" }}>
                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 10, padding: "0 2px" }}>
                   <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                    <div style={{ width: 8, height: 8, borderRadius: "50%", background: stage.color }} />
-                    <span style={{ fontSize: 11, fontWeight: 700, color: COLORS.textSecondary, letterSpacing: "0.08em", textTransform: "uppercase" }}>{stage.label}</span>
+                    <div style={{ width: 8, height: 8, borderRadius: "50%", background: col.color }} />
+                    <span style={{ fontSize: 11, fontWeight: 700, color: COLORS.textSecondary, letterSpacing: "0.08em", textTransform: "uppercase" }}>{col.label}</span>
                   </div>
-                  <span style={{ fontSize: 11, color: stageLeads.length > 0 ? COLORS.textSecondary : COLORS.textMuted, fontFamily: "'DM Mono', monospace" }}>{stageLeads.length}</span>
+                  <span style={{ fontSize: 11, color: colLeads.length > 0 ? COLORS.textSecondary : COLORS.textMuted, fontFamily: "'DM Mono', monospace" }}>{colLeads.length}</span>
                 </div>
                 <div style={{ display: "flex", flexDirection: "column", gap: 8, minHeight: 100 }}>
-                  {stageLeads.map(lead => (
+                  {colLeads.map(lead => (
                     <LeadCard key={lead.id} lead={lead} onMove={onMove} onSelect={onSelect} isSelected={selectedLead?.id === lead.id} onArchive={onArchive} searchQuery={search} TAG_COLORS={TAG_COLORS} />
                   ))}
-                  {stageLeads.length === 0 && (
+                  {colLeads.length === 0 && (
                     <div style={{ border: `1px dashed ${COLORS.border}`, borderRadius: 10, padding: "24px 16px", textAlign: "center", color: COLORS.textMuted, fontSize: 11 }}>
                       {hasFilter ? "No matches" : "Empty"}
                     </div>
