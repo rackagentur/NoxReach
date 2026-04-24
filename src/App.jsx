@@ -1845,8 +1845,7 @@ function dbToGig(r) {
   };
 }
 function gigToDb(gig, userId) {
-  return {
-    id:      typeof gig.id === "number" ? undefined : gig.id,
+  const obj = {
     user_id: userId,
     venue:   gig.venue,
     city:    gig.city || "",
@@ -1856,6 +1855,9 @@ function gigToDb(gig, userId) {
     tag:     gig.tag || "",
     notes:   gig.notes || "",
   };
+  if (gig.id && typeof gig.id === "string") obj.id = gig.id;
+  return obj;
+   
 }
 
 function GigCalendarView({ leads, gigs, setGigs, showToast, isPro, onUpgradeClick, customTags, TAG_COLORS, supabase, onDateClick, userId }) {
