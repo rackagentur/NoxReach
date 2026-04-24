@@ -982,6 +982,59 @@
 <!-- ══════════════════════════════════
      HOW IT WORKS
 ══════════════════════════════════ -->
+
+<!-- ── App Screenshots ─────────────────────────────────────────── -->
+<section style="background: #060608; padding: 80px 0 60px;">
+  <div class="wrap">
+    <div class="sec-label" style="text-align:center;">THE APP</div>
+    <h2 class="sec-title" style="text-align:center; margin-bottom: 12px;">See it in action.</h2>
+    <p style="text-align:center; color:#9090a8; font-size:15px; margin-bottom: 48px; max-width:520px; margin-left:auto; margin-right:auto;">
+      Every view is built around one goal — moving leads forward until they become confirmed gigs.
+    </p>
+
+    <!-- Tabs -->
+    <div style="display:flex; justify-content:center; gap:8px; margin-bottom:32px;">
+      <button onclick="showTab('pipeline')" id="tab-pipeline"
+        style="padding:8px 20px; border-radius:8px; border:1px solid #6B2FD4; background:#0F0820; color:#8B4FFF; font-size:13px; font-weight:700; cursor:pointer; font-family:inherit;">
+        Pipeline
+      </button>
+      <button onclick="showTab('dashboard')" id="tab-dashboard"
+        style="padding:8px 20px; border-radius:8px; border:1px solid #1c1c2e; background:transparent; color:#9090a8; font-size:13px; font-weight:700; cursor:pointer; font-family:inherit;">
+        Dashboard
+      </button>
+      <button onclick="showTab('followups')" id="tab-followups"
+        style="padding:8px 20px; border-radius:8px; border:1px solid #1c1c2e; background:transparent; color:#9090a8; font-size:13px; font-weight:700; cursor:pointer; font-family:inherit;">
+        Follow-ups
+      </button>
+    </div>
+
+    <!-- Screenshot frames -->
+    <div style="position:relative; border-radius:14px; overflow:hidden; border:1px solid #1c1c2e; box-shadow: 0 24px 80px rgba(0,0,0,0.6);">
+      <img id="shot-pipeline" src="/screenshot-pipeline.png" alt="NoxReach Pipeline" style="width:100%; display:block;" />
+      <img id="shot-dashboard" src="/screenshot-dashboard.png" alt="NoxReach Dashboard" style="width:100%; display:none;" />
+      <img id="shot-followups" src="/screenshot-followups.png" alt="NoxReach Follow-ups" style="width:100%; display:none;" />
+    </div>
+  </div>
+</section>
+
+<script>
+function showTab(name) {
+  ['pipeline','dashboard','followups'].forEach(function(t) {
+    document.getElementById('shot-' + t).style.display = t === name ? 'block' : 'none';
+    var btn = document.getElementById('tab-' + t);
+    if (t === name) {
+      btn.style.border = '1px solid #6B2FD4';
+      btn.style.background = '#0F0820';
+      btn.style.color = '#8B4FFF';
+    } else {
+      btn.style.border = '1px solid #1c1c2e';
+      btn.style.background = 'transparent';
+      btn.style.color = '#9090a8';
+    }
+  });
+}
+</script>
+
 <section class="how" id="how">
   <div class="wrap">
     <div class="sec-label">How it works</div>
