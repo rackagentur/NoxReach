@@ -820,6 +820,47 @@ function LeadDetail({ lead, onClose, onMove, onArchive, onDelete, supabase, user
         </div>
       )}
 
+      {/* Post-booking mini-pipeline */}
+      {!lead.archived && lead.stage === "booked" && (() => {
+        const BOOKING_STEPS = [
+          { id: "fee_confirmed",    label: "Fee confirmed",   required: true },
+          { id: "contract_sent",    label: "Contract sent",   required: false },
+          { id: "contract_signed",  label: "Contract signed", required: false },
+          { id: "confirmed",        label: "Confirmed",       required: false },
+        ];
+        const status = lead.bookingStatus || [];
+        const allDone = BOOKING_STEPS.every(s => status.includes(s.id));
+        const toggle = async (stepId) => {
+          const next = status.includes(stepId)
+            ? status.filter(s => s !== stepId)
+            : [...status, stepId];
+          const { error } = await supabase.from("leads").update({ booking_status: next }).eq("id", lead.id).eq("user_id", userId);
+          if (!error) onUpdate({ ...lead, bookingStatus: next });
+        };
+        return (
+          <div style={{ background: allDone ? COLORS.gold + "11" : COLORS.surface, border: `1px solid ${allDone ? COLORS.gold + "44" : COLORS.border}`, borderRadius: 10, padding: "12px 14px", marginBottom: 12 }}>
+            <div style={{ fontSize: 10, color: allDone ? COLORS.gold : COLORS.textMuted, letterSpacing: "0.1em", textTransform: "uppercase", marginBottom: 10, fontWeight: 600 }}>
+              {allDone ? "✓ Booking complete" : "Booking checklist"}
+            </div>
+            {BOOKING_STEPS.map((step, i) => {
+              const done = status.includes(step.id);
+              return (
+                <div key={step.id} style={{ display: "flex", alignItems: "center", gap: 10, padding: "6px 0", borderBottom: i < BOOKING_STEPS.length - 1 ? `1px solid ${COLORS.border}22` : "none" }}>
+                  <button
+                    onClick={() => toggle(step.id)}
+                    style={{ width: 18, height: 18, borderRadius: 4, border: `1.5px solid ${done ? COLORS.gold : COLORS.border}`, background: done ? COLORS.gold : "transparent", cursor: "pointer", flexShrink: 0, display: "flex", alignItems: "center", justifyContent: "center", padding: 0 }}
+                  >
+                    {done && <span style={{ fontSize: 10, color: "#000", fontWeight: 700 }}>✓</span>}
+                  </button>
+                  <span style={{ fontSize: 12, color: done ? COLORS.text : COLORS.textMuted, textDecoration: done ? "none" : "none", fontWeight: done ? 600 : 400 }}>{step.label}</span>
+                  {!step.required && !done && <span style={{ fontSize: 9, color: COLORS.textMuted, marginLeft: "auto", opacity: 0.6 }}>optional</span>}
+                </div>
+              );
+            })}
+          </div>
+        );
+      })()}
+
       {/* Mark as Contacted */}
       {!lead.archived && lead.stage === "target" && (
         <button
@@ -1854,6 +1895,7 @@ function dbToLead(r) {
     followUpDate:  r.follow_up_date || null,
     lastContact:   r.last_contact || null,
     archived:      r.archived || false,
+    bookingStatus: r.booking_status || [],
   };
 }
 function leadToDb(lead, userId) {
@@ -1870,6 +1912,7 @@ function leadToDb(lead, userId) {
     follow_up_date: lead.followUpDate || null,
     last_contact:   lead.lastContact || null,
     archived:       lead.archived || false,
+    booking_status: lead.bookingStatus || [],
   };
 }
 function dbToGig(r) {
