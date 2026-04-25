@@ -2598,6 +2598,7 @@ Feel free to use this as a testimonial on the site.
       background: "rgba(0,0,0,0.85)", backdropFilter: "blur(8px)",
       display: "flex", alignItems: "center", justifyContent: "center",
     }} onClick={e => e.target === e.currentTarget && onClose()}>
+      <style>{`@keyframes slideUp { from { opacity:0; transform: translateY(16px); } to { opacity:1; transform: translateY(0); } }`}</style>
       <div style={{
         background: COLORS.surface,
         border: `1px solid ${COLORS.purpleDim}`,
