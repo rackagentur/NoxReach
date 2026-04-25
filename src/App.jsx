@@ -588,12 +588,12 @@ function LeadCard({ lead, onMove, onSelect, isSelected, onArchive, searchQuery, 
             <button onClick={e => { e.stopPropagation(); onMove(lead.id, STAGES[stageIndex - 1].id); }} style={{ flex: 1, padding: "5px", background: "transparent", border: `1px solid ${COLORS.border}`, borderRadius: 6, color: COLORS.textSecondary, fontSize: 11, cursor: "pointer" }}>← Back</button>
           )}
           {stageIndex < STAGES.length - 1 && (
-            <button onClick={e => { e.stopPropagation(); onMove(lead.id, STAGES[stageIndex + 1].id); }} style={{ flex: 2, padding: "5px", background: COLORS.purple + "33", border: `1px solid ${COLORS.purple}66`, borderRadius: 6, color: COLORS.purpleLight, fontSize: 11, cursor: "pointer", fontWeight: 700 }}>
+            <button onClick={e => { e.stopPropagation(); onMove(lead.id, STAGES[stageIndex + 1].id); }} style={{ flex: 2, padding: "5px", background: stageIndex === STAGES.length - 2 ? "rgba(0,212,255,0.15)" : COLORS.purple + "33", border: `1px solid ${stageIndex === STAGES.length - 2 ? "rgba(0,212,255,0.5)" : COLORS.purple + "66"}`, borderRadius: 6, color: stageIndex === STAGES.length - 2 ? "#00D4FF" : COLORS.purpleLight, fontSize: 11, cursor: "pointer", fontWeight: 700 }}>
               {stageIndex === STAGES.length - 2 ? "✓ Book" : "Advance →"}
             </button>
           )}
           {lead.stage === "replied" ? (
-            <button onClick={e => { e.stopPropagation(); onArchive(lead.id); }} style={{ padding: "5px 8px", background: "transparent", border: `1px solid ${COLORS.border}`, borderRadius: 6, color: COLORS.textMuted, fontSize: 10, cursor: "pointer", whiteSpace: "nowrap" }}>Not this time</button>
+            <button onClick={e => { e.stopPropagation(); onArchive(lead.id); }} style={{ padding: "5px 8px", background: "rgba(239,68,68,0.1)", border: "1px solid rgba(239,68,68,0.35)", borderRadius: 6, color: COLORS.red, fontSize: 10, cursor: "pointer", whiteSpace: "nowrap", fontWeight: 600 }}>Not this time</button>
           ) : (
             <button onClick={e => { e.stopPropagation(); onArchive(lead.id); }} title="Archive" style={{ padding: "5px 8px", background: "transparent", border: `1px solid ${COLORS.border}`, borderRadius: 6, color: COLORS.textMuted, fontSize: 11, cursor: "pointer" }}>◻</button>
           )}
