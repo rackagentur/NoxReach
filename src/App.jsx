@@ -1164,7 +1164,7 @@ function AddLeadModal({ onClose, onAdd, customTags, TAG_COLORS, onAddTag }) {
 
 function StatCard({ label, value, sub, accent }) {
   return (
-    <div style={{ background: COLORS.surface, border: `1px solid ${COLORS.border}`, borderRadius: 12, padding: "20px 24px", flex: 1, position: "relative", overflow: "hidden" }}>
+    <div style={{ background: COLORS.surface, border: `1px solid ${COLORS.border}`, borderRadius: 12, padding: "16px 18px", flex: 1, minWidth: "calc(50% - 7px)", position: "relative", overflow: "hidden" }}>
       <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: 2, background: accent || COLORS.purple, opacity: 0.7 }} />
       <div style={{ fontSize: 28, fontWeight: 800, color: COLORS.text, fontFamily: "'DM Mono', monospace", letterSpacing: "-0.02em" }}>{value}</div>
       <div style={{ fontSize: 11, color: COLORS.textSecondary, marginTop: 4, letterSpacing: "0.08em", textTransform: "uppercase", fontWeight: 600 }}>{label}</div>
@@ -1218,7 +1218,7 @@ function DashboardView({ leads, onNavigate, isPro, onUpgradeClick }) {
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
       {/* Stat row */}
-      <div style={{ display: "flex", gap: 14 }}>
+      <div style={{ display: "flex", gap: 14, flexWrap: "wrap" }}>
         <StatCard label="Total Leads"   value={total}           sub="in pipeline"                                         accent={COLORS.textSecondary} />
         <StatCard label="Outreach Sent" value={contacted}       sub={`${active.filter(l => l.stage === "target").length} still in target`} accent={COLORS.purple} />
         <StatCard label="Reply Rate"    value={`${replyRate}%`} sub={`${replied} replies`}                                accent={COLORS.purpleLight} />
@@ -2512,9 +2512,63 @@ function OnboardingBanner({ leads, assets, onNavigate, onDismiss }) {
   );
 }
 
+// Mobile detection hook
+function useIsMobile() {
+  const [isMobile, setIsMobile] = React.useState(() => window.innerWidth < 768);
+  React.useEffect(() => {
+    const handler = () => setIsMobile(window.innerWidth < 768);
+    window.addEventListener('resize', handler);
+    return () => window.removeEventListener('resize', handler);
+  }, []);
+  return isMobile;
+}
+
+function MobileBottomNav({ activeTab, setActiveTab, dueCount, unreadCount }) {
+  const NAV_ITEMS = [
+    { id: 'dashboard', icon: String.fromCharCode(9635), label: 'Home' },
+    { id: 'pipeline',  icon: String.fromCharCode(11035), label: 'Pipeline' },
+    { id: 'followups', icon: String.fromCharCode(9200), label: 'Follow-ups', badge: dueCount },
+    { id: 'calendar',  icon: '📅', label: 'Calendar' },
+    { id: 'replyhub',  icon: String.fromCharCode(9993), label: 'Reply', badge: unreadCount },
+  ];
+  return (
+    <div style={{
+      position: 'fixed', bottom: 0, left: 0, right: 0, zIndex: 200,
+      background: '#111111', borderTop: '1px solid #1E1E1E',
+      display: 'flex', paddingBottom: 'env(safe-area-inset-bottom, 0px)',
+    }}>
+      {NAV_ITEMS.map(item => {
+        const active = activeTab === item.id;
+        return (
+          <button key={item.id} onClick={() => setActiveTab(item.id)} style={{
+            flex: 1, padding: '10px 4px 8px',
+            background: 'transparent', border: 'none', cursor: 'pointer',
+            display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 3,
+            position: 'relative',
+          }}>
+            {item.badge > 0 && (
+              <div style={{
+                position: 'absolute', top: 6, right: '50%', marginRight: -18,
+                background: '#D4AF37', color: '#000',
+                borderRadius: 8, padding: '0 4px',
+                fontSize: 9, fontWeight: 800, lineHeight: '14px',
+                minWidth: 14, textAlign: 'center',
+              }}>{item.badge}</div>
+            )}
+            <span style={{ fontSize: 18, lineHeight: 1, opacity: active ? 1 : 0.4 }}>{item.icon}</span>
+            <span style={{ fontSize: 9, fontWeight: active ? 700 : 500, color: active ? '#8B4FFF' : '#888' }}>{item.label}</span>
+            {active && <div style={{ position: 'absolute', top: 0, left: '20%', right: '20%', height: 2, background: '#8B4FFF', borderRadius: 2 }} />}
+          </button>
+        );
+      })}
+    </div>
+  );
+}
+
 function NoxReachApp({ user, session, supabase }) {
   const userEmail = user?.email || "";
   const userName  = user?.user_metadata?.full_name || userEmail.split("@")[0] || "DJ";
+  const isMobile  = useIsMobile();
 
   const handleSignOut = async () => {
     await supabase.auth.signOut();
@@ -2787,7 +2841,7 @@ const activeLeads = leads.filter(l => !l.archived);
       <Toast toast={toast} />
 
       {/* Sidebar */}
-      <div style={{ position: "fixed", left: 0, top: 0, bottom: 0, width: 220, background: COLORS.surface, borderRight: `1px solid ${COLORS.border}`, display: "flex", flexDirection: "column", zIndex: 100 }}>
+      <div style={{ position: "fixed", left: 0, top: 0, bottom: 0, width: 220, background: COLORS.surface, borderRight: `1px solid ${COLORS.border}`, display: isMobile ? "none" : "flex", flexDirection: "column", zIndex: 100 }}>
         <div style={{ padding: "24px 20px 20px", borderBottom: `1px solid ${COLORS.border}` }}>
           <a href="https://rackagentur.github.io/NoxReach/" target="_blank" rel="noopener noreferrer" style={{ textDecoration: "none", display: "flex", alignItems: "center", gap: 12 }}>
             <img src="/nr-icon.png" alt="NoxReach" style={{ width: 32, height: 32, borderRadius: 8, flexShrink: 0 }} />
@@ -2867,7 +2921,7 @@ const activeLeads = leads.filter(l => !l.archived);
       </div>
 
       {/* Main */}}
-      <div style={{ marginLeft: 220, display: "flex", flexDirection: "column", minHeight: "100vh" }}>
+      <div style={{ marginLeft: isMobile ? 0 : 220, display: "flex", flexDirection: "column", minHeight: "100vh", paddingBottom: isMobile ? 64 : 0 }}>
         {/* Header */}
         <div style={{ padding: "20px 28px", borderBottom: `1px solid ${COLORS.border}`, background: COLORS.surface, position: "sticky", top: 0, zIndex: 50 }}>
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: activeTab === "pipeline" ? 14 : 0 }}>
@@ -2917,8 +2971,10 @@ const activeLeads = leads.filter(l => !l.archived);
           )}
         </div>
 
+        {isMobile && <MobileBottomNav activeTab={activeTab} setActiveTab={setActiveTab} dueCount={dueCount} unreadCount={unreadCount} />}
+
         {/* Content */}
-        <div style={{ padding: 28, flex: 1, display: activeTab === "pipeline" && selectedLead ? "grid" : "block", gridTemplateColumns: activeTab === "pipeline" && selectedLead ? "1fr 280px" : undefined, gap: 20 }}>
+        <div style={{ padding: isMobile ? 16 : 28, flex: 1, display: activeTab === "pipeline" && selectedLead ? "grid" : "block", gridTemplateColumns: activeTab === "pipeline" && selectedLead ? "1fr 280px" : undefined, gap: 20 }}>
           {activeTab === "dashboard" && (
             <>
               {!onboardingDismissed && (
