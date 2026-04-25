@@ -3171,7 +3171,7 @@ const activeLeads = leads.filter(l => !l.archived);
       <div style={{ position: "fixed", left: 0, top: 0, bottom: 0, width: 220, background: COLORS.surface, borderRight: `1px solid ${COLORS.border}`, display: isMobile ? "none" : "flex", flexDirection: "column", zIndex: 100 }}>
         <div style={{ padding: "24px 20px 20px", borderBottom: `1px solid ${COLORS.border}` }}>
           <a href="https://rackagentur.github.io/NoxReach/" target="_blank" rel="noopener noreferrer" style={{ textDecoration: "none", display: "flex", alignItems: "center", gap: 12 }}>
-            <img src="/nr-icon.png" alt="NoxReach" style={{ width: 32, height: 32, borderRadius: 8, flexShrink: 0 }} />
+            <img src="/nr-icon.png" alt="NoxReach" style={{ width: 42, height: 42, borderRadius: 10, flexShrink: 0 }} />
             <img src="/nr-wordmark.png" alt="NoxReach" style={{ height: 18, objectFit: "contain" }} />
           </a>
         </div>
