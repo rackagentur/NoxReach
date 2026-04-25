@@ -526,8 +526,8 @@ function SearchFilterBar({ search, setSearch, filters, setFilters, resultCount, 
 
 function LeadCard({ lead, onMove, onSelect, isSelected, onArchive, searchQuery, TAG_COLORS, onUpdateLead }) {
   const showInline = !lead.archived && ["contacted","followup1","followup2"].includes(lead.stage);
-  const [contactLog, setContactLog] = React.useState(lead.contactLog || "");
-  const [logSaved, setLogSaved] = React.useState(false);
+  const [contactLog, setContactLog] = useState(lead.contactLog || "");
+  const [logSaved, setLogSaved] = useState(false);
   const METHODS = [
     { id: "email", icon: "E", label: "Email" },
     { id: "instagram", icon: "IG", label: "DM" },
