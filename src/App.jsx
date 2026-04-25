@@ -524,7 +524,19 @@ function SearchFilterBar({ search, setSearch, filters, setFilters, resultCount, 
 
 // ─── Lead Card ────────────────────────────────────────────────────────────────
 
-function LeadCard({ lead, onMove, onSelect, isSelected, onArchive, searchQuery, TAG_COLORS }) {
+function LeadCard({ lead, onMove, onSelect, isSelected, onArchive, searchQuery, TAG_COLORS, onUpdateLead }) {
+  const showInline = !lead.archived && ["contacted","followup1","followup2"].includes(lead.stage);
+  const [contactLog, setContactLog] = React.useState(lead.contactLog || "");
+  const [logSaved, setLogSaved] = React.useState(false);
+  const METHODS = [
+    { id: "email", icon: "E", label: "Email" },
+    { id: "instagram", icon: "IG", label: "DM" },
+    { id: "whatsapp", icon: "WA", label: "WhatsApp" },
+    { id: "phone", icon: "P", label: "Phone" },
+    { id: "other", icon: "+", label: "Other" },
+  ];
+  const handleMethod = (e, methodId) => { e.stopPropagation(); onUpdateLead && onUpdateLead(lead.id, { outreachMethod: methodId }); };
+  const handleLogBlur = () => { if (contactLog !== (lead.contactLog || "")) { onUpdateLead && onUpdateLead(lead.id, { contactLog }); setLogSaved(true); setTimeout(() => setLogSaved(false), 1500); } };
   const stageIndex = STAGES.findIndex(s => s.id === lead.stage);
   const isOverdue  = lead.followUpDate && new Date(lead.followUpDate) <= new Date();
 
@@ -585,6 +597,21 @@ function LeadCard({ lead, onMove, onSelect, isSelected, onArchive, searchQuery, 
         </div>
       ) : (
         <button onClick={e => { e.stopPropagation(); onArchive(lead.id); }} style={{ width: "100%", padding: "5px", background: "transparent", border: `1px solid ${COLORS.border}`, borderRadius: 6, color: COLORS.textSecondary, fontSize: 11, cursor: "pointer" }}>↩ Restore</button>
+      )}
+      {showInline && (
+        <div style={{ marginTop: 10, paddingTop: 10, borderTop: `1px solid ${COLORS.border}` }} onClick={e => e.stopPropagation()}>
+          <div style={{ fontSize: 9, color: COLORS.textMuted, letterSpacing: "0.08em", textTransform: "uppercase", marginBottom: 6 }}>How did you reach out?</div>
+          <div style={{ display: "flex", gap: 6, marginBottom: 8 }}>
+            {METHODS.map(m => {
+              const active = lead.outreachMethod === m.id;
+              return (
+                <button key={m.id} onClick={e => handleMethod(e, m.id)} title={m.label} style={{ flex: 1, padding: "5px 2px", borderRadius: 6, cursor: "pointer", background: active ? COLORS.purple + "33" : "transparent", border: `1px solid ${active ? COLORS.purple : COLORS.border}`, fontSize: 11, fontWeight: 700, color: active ? COLORS.purpleLight : COLORS.textMuted, transition: "all 0.15s" }}>{m.icon}</button>
+              );
+            })}
+          </div>
+          <textarea value={contactLog} onChange={e => setContactLog(e.target.value)} onBlur={handleLogBlur} onClick={e => e.stopPropagation()} placeholder="How did it go? Quick note..." rows={2} style={{ width: "100%", background: COLORS.bg, border: `1px solid ${logSaved ? COLORS.green : COLORS.border}`, borderRadius: 6, padding: "6px 8px", color: COLORS.text, fontSize: 11, outline: "none", fontFamily: "inherit", resize: "none", lineHeight: 1.5, transition: "border-color 0.2s" }} />
+          {logSaved && <div style={{ fontSize: 9, color: COLORS.green, marginTop: 3 }}>Saved</div>}
+        </div>
       )}
     </div>
   );
