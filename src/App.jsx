@@ -1500,7 +1500,7 @@ function AssetsView({ supabase, userId }) {
     setSaving(false);
   };
 
-  const incomplete = !assets?.artist_name || !assets?.epk_url || !assets?.soundcloud || !assets?.booking_email;
+  const incomplete = !saved && (!assets?.artist_name || !assets?.epk_url || !assets?.soundcloud || !assets?.booking_email);
 
   const inputStyle = {
     width: "100%", background: COLORS.bg, border: `1px solid ${COLORS.border}`,
@@ -1814,8 +1814,8 @@ function SettingsView({ settings, onSave, isPro, onUpgradeClick, customTags, def
                 <span style={{ fontSize: 13, color: COLORS.text, flex: 1 }}>{s.label}</span>
                 <span style={{ fontSize: 11, color: COLORS.textMuted }}>
                   {s.id === "contacted"  && `Reminder in ${local.followup1Days} days`}
-                  {s.id === "followup1"  && `Reminder in ${local.followup2Days} days`}
-                  {s.id === "followup2"  && "Last attempt"}
+                  {s.id === "followup1"  && `2nd nudge in ${local.followup2Days} days`}
+                  {s.id === "followup2"  && "Final attempt"}
                   {s.id === "target"     && "Not yet contacted"}
                   {s.id === "replied"    && "Close the booking"}
                   {s.id === "booked"     && "✓ Done"}
@@ -2668,7 +2668,7 @@ const activeLeads = leads.filter(l => !l.archived);
       {/* Sidebar */}
       <div style={{ position: "fixed", left: 0, top: 0, bottom: 0, width: 220, background: COLORS.surface, borderRight: `1px solid ${COLORS.border}`, display: "flex", flexDirection: "column", zIndex: 100 }}>
         <div style={{ padding: "24px 20px 20px", borderBottom: `1px solid ${COLORS.border}` }}>
-          <a href="https://rackagentur.github.io/NoxReach/landing-v2.html" target="_blank" rel="noopener noreferrer" style={{ textDecoration: "none", display: "flex", alignItems: "center", gap: 12 }}>
+          <a href="https://rackagentur.github.io/NoxReach/" target="_blank" rel="noopener noreferrer" style={{ textDecoration: "none", display: "flex", alignItems: "center", gap: 12 }}>
             <img src="/nr-icon.png" alt="NoxReach" style={{ width: 32, height: 32, borderRadius: 8, flexShrink: 0 }} />
             <img src="/nr-wordmark.png" alt="NoxReach" style={{ height: 18, objectFit: "contain" }} />
           </a>
