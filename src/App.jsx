@@ -581,6 +581,8 @@ function LeadCard({ lead, onMove, onSelect, isSelected, onArchive, searchQuery, 
       )}
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 8, paddingRight: (isOverdue && !lead.archived) ? 72 : 0 }}>
         <div style={{ fontSize: 13, fontWeight: 700, color: COLORS.text }}>{highlight(lead.name)}</div>
+        {lead.stage === "followup1" && <Badge color="#9B5FFF">F1</Badge>}
+        {lead.stage === "followup2" && <Badge color={COLORS.gold}>F2</Badge>}
         <Badge color={TIER_COLORS[lead.tier]}>{lead.tier}</Badge>
       </div>
       <div style={{ display: "flex", gap: 6, marginBottom: 8, flexWrap: "wrap" }}>
