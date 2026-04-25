@@ -1254,9 +1254,10 @@ function DashboardView({ leads, onNavigate, isPro, onUpgradeClick }) {
       const isOverdue = daysAgo !== null && daysAgo >= 0;
       const stageIdx  = STAGES.findIndex(s => s.id === l.stage);
       const stageLabel = l.stage === "contacted" ? "F1" : l.stage === "followup1" ? "F2" : l.stage === "followup2" ? "F3" : l.stage === "replied" ? "Reply" : "?";
-      const daysLabel  = l.followUpDate ? (isOverdue ? (daysAgo === 0 ? "Today" : `${daysAgo}d overdue`) : `in ${Math.abs(daysAgo)}d`) : "No date set";
-      const urgency    = isOverdue ? 0 : daysAgo === null ? 3 : 1;
-      return { ...l, stageLabel, daysLabel, isOverdue, urgency, stageIdx };
+      const daysLabel  = l.followUpDate ? (isOverdue ? (daysAgo === 0 ? "Today" : `${daysAgo}d overdue`) : (Math.abs(daysAgo) === 1 ? "Tomorrow" : `in ${Math.abs(daysAgo)}d`)) : "No date set";
+      const urgency    = isOverdue ? 0 : daysAgo !== null && Math.abs(daysAgo) <= 2 ? 1 : daysAgo === null ? 3 : 2;
+      const urgencyColor = isOverdue ? COLORS.red : (daysAgo !== null && Math.abs(daysAgo) <= 2) ? COLORS.gold : COLORS.textSecondary;
+      return { ...l, stageLabel, daysLabel, isOverdue, urgency, urgencyColor, stageIdx };
     })
     .sort((a, b) => a.urgency - b.urgency || (a.followUpDate || "z").localeCompare(b.followUpDate || "z"))
     .slice(0, 5);
@@ -1310,8 +1311,8 @@ function DashboardView({ leads, onNavigate, isPro, onUpgradeClick }) {
                   <div key={lead.id} onClick={() => onNavigate("pipeline")} style={{ padding: "13px 20px", borderBottom: i < nextActions.length - 1 ? `1px solid ${COLORS.border}` : "none", display: "flex", alignItems: "center", gap: 12, cursor: "pointer", transition: "background 0.12s" }}
                     onMouseEnter={e => e.currentTarget.style.background = COLORS.surfaceHover}
                     onMouseLeave={e => e.currentTarget.style.background = "transparent"}>
-                    <div style={{ width: 36, height: 36, borderRadius: 9, background: lead.isOverdue ? COLORS.gold + "22" : COLORS.purpleBg, border: `1px solid ${lead.isOverdue ? COLORS.gold + "55" : COLORS.purpleDim}`, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
-                      <span style={{ fontSize: 10, fontWeight: 800, color: lead.isOverdue ? COLORS.gold : COLORS.purple, letterSpacing: "0.04em" }}>{lead.stageLabel}</span>
+                    <div style={{ width: 36, height: 36, borderRadius: 9, background: lead.urgencyColor + "22", border: `1px solid ${lead.urgencyColor + "55"}`, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+                      <span style={{ fontSize: 10, fontWeight: 800, color: lead.urgencyColor, letterSpacing: "0.04em" }}>{lead.stageLabel}</span>
                     </div>
                     <div style={{ flex: 1, minWidth: 0 }}>
                       <div style={{ fontSize: 13, fontWeight: 700, color: COLORS.text, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{lead.name}</div>
@@ -1323,7 +1324,7 @@ function DashboardView({ leads, onNavigate, isPro, onUpgradeClick }) {
                       </div>
                     </div>
                     <div style={{ textAlign: "right", flexShrink: 0 }}>
-                      <div style={{ fontSize: 11, fontWeight: 700, color: lead.isOverdue ? COLORS.gold : COLORS.textSecondary }}>{lead.daysLabel}</div>
+                      <div style={{ fontSize: 11, fontWeight: 700, color: lead.urgencyColor }}>{lead.daysLabel}</div>
                       <Badge color={TIER_COLORS[lead.tier]}>{lead.tier}</Badge>
                     </div>
                   </div>
