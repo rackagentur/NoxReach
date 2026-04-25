@@ -1595,7 +1595,7 @@ function AssetsView({ supabase, userId }) {
 
   useEffect(() => {
     if (!userId) return;
-    supabase.from("user_assets").select("*").eq("user_id", userId).single()
+    supabase.from("user_assets").select("*").eq("user_id", userId).maybeSingle()
       .then(({ data }) => setAssets(data || {}));
   }, [userId]);
 
