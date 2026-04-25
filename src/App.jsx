@@ -2920,7 +2920,7 @@ const activeLeads = leads.filter(l => !l.archived);
         </div>
       </div>
 
-      {/* Main */}}
+      {/* Main */}
       <div style={{ marginLeft: isMobile ? 0 : 220, display: "flex", flexDirection: "column", minHeight: "100vh", paddingBottom: isMobile ? 64 : 0 }}>
         {/* Header */}
         <div style={{ padding: "20px 28px", borderBottom: `1px solid ${COLORS.border}`, background: COLORS.surface, position: "sticky", top: 0, zIndex: 50 }}>
