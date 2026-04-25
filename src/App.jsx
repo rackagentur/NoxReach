@@ -2001,7 +2001,7 @@ function GigCalendarView({ leads, gigs, setGigs, showToast, isPro, onUpgradeClic
   const bookedLeads = leads.filter(l => l.stage === "booked" && !l.archived);
 
   return (
-    <div style={{ display: "grid", gridTemplateColumns: "1fr 300px", gap: 20 }}>
+    <div style={{ display: "grid", gridTemplateColumns: window.innerWidth < 768 ? "1fr" : "1fr 300px", gap: 20 }}>
       {/* Left: Calendar + upcoming list */}
       <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
 
