@@ -529,11 +529,10 @@ function LeadCard({ lead, onMove, onSelect, isSelected, onArchive, searchQuery, 
   const [contactLog, setContactLog] = useState(lead.contactLog || "");
   const [logSaved, setLogSaved] = useState(false);
   const METHODS = [
-    { id: "email", icon: "E", label: "Email" },
-    { id: "instagram", icon: "IG", label: "DM" },
-    { id: "whatsapp", icon: "WA", label: "WhatsApp" },
-    { id: "phone", icon: "P", label: "Phone" },
-    { id: "other", icon: "+", label: "Other" },
+    { id: "email",     emoji: "📧", label: "Email", color: "#6B2FD4" },
+    { id: "instagram", emoji: "📸", label: "DM",    color: "#E1306C" },
+    { id: "phone",     emoji: "📞", label: "Phone", color: "#22C55E" },
+    { id: "other",     emoji: "✶", label: "Other", color: "#D4AF37" },
   ];
   const handleMethod = (e, methodId) => { e.stopPropagation(); onUpdateLead && onUpdateLead(lead.id, { outreachMethod: methodId }); };
   const handleLogBlur = () => { if (contactLog !== (lead.contactLog || "")) { onUpdateLead && onUpdateLead(lead.id, { contactLog }); setLogSaved(true); setTimeout(() => setLogSaved(false), 1500); } };
@@ -593,7 +592,11 @@ function LeadCard({ lead, onMove, onSelect, isSelected, onArchive, searchQuery, 
               {stageIndex === STAGES.length - 2 ? "✓ Book" : "Advance →"}
             </button>
           )}
-          <button onClick={e => { e.stopPropagation(); onArchive(lead.id); }} title="Archive" style={{ padding: "5px 8px", background: "transparent", border: `1px solid ${COLORS.border}`, borderRadius: 6, color: COLORS.textMuted, fontSize: 11, cursor: "pointer" }}>◻</button>
+          {lead.stage === "replied" ? (
+            <button onClick={e => { e.stopPropagation(); onArchive(lead.id); }} style={{ padding: "5px 8px", background: "transparent", border: `1px solid ${COLORS.border}`, borderRadius: 6, color: COLORS.textMuted, fontSize: 10, cursor: "pointer", whiteSpace: "nowrap" }}>Not this time</button>
+          ) : (
+            <button onClick={e => { e.stopPropagation(); onArchive(lead.id); }} title="Archive" style={{ padding: "5px 8px", background: "transparent", border: `1px solid ${COLORS.border}`, borderRadius: 6, color: COLORS.textMuted, fontSize: 11, cursor: "pointer" }}>◻</button>
+          )}
         </div>
       ) : (
         <button onClick={e => { e.stopPropagation(); onArchive(lead.id); }} style={{ width: "100%", padding: "5px", background: "transparent", border: `1px solid ${COLORS.border}`, borderRadius: 6, color: COLORS.textSecondary, fontSize: 11, cursor: "pointer" }}>↩ Restore</button>
@@ -601,11 +604,11 @@ function LeadCard({ lead, onMove, onSelect, isSelected, onArchive, searchQuery, 
       {showInline && (
         <div style={{ marginTop: 10, paddingTop: 10, borderTop: `1px solid ${COLORS.border}` }} onClick={e => e.stopPropagation()}>
           <div style={{ fontSize: 9, color: COLORS.textMuted, letterSpacing: "0.08em", textTransform: "uppercase", marginBottom: 6 }}>How did you reach out?</div>
-          <div style={{ display: "flex", gap: 6, marginBottom: 8 }}>
+          <div style={{ display: "flex", gap: 6, marginBottom: 8, flexWrap: "wrap" }}>
             {METHODS.map(m => {
               const active = lead.outreachMethod === m.id;
               return (
-                <button key={m.id} onClick={e => handleMethod(e, m.id)} title={m.label} style={{ flex: 1, padding: "5px 2px", borderRadius: 6, cursor: "pointer", background: active ? COLORS.purple + "33" : "transparent", border: `1px solid ${active ? COLORS.purple : COLORS.border}`, fontSize: 11, fontWeight: 700, color: active ? COLORS.purpleLight : COLORS.textMuted, transition: "all 0.15s" }}>{m.icon}</button>
+                <button key={m.id} onClick={e => handleMethod(e, m.id)} style={{ display: "flex", alignItems: "center", gap: 5, padding: "5px 10px", borderRadius: 20, cursor: "pointer", background: active ? m.color + "33" : COLORS.bg, border: `1px solid ${active ? m.color : COLORS.border}`, color: active ? m.color : COLORS.textSecondary, fontSize: 11, fontWeight: active ? 700 : 500, transition: "all 0.15s" }}><span style={{ fontSize: 13 }}>{m.emoji}</span><span>{m.label}</span></button>
               );
             })}
           </div>
