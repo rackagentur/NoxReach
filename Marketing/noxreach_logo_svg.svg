@@ -1,0 +1,38 @@
+<svg width="100%" viewBox="0 0 680 320" role="img" style="" xmlns="http://www.w3.org/2000/svg">
+  <title style="fill:rgb(0, 0, 0);stroke:none;color:rgb(255, 255, 255);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, &quot;system-ui&quot;, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto">NoxReach logo — NR monogram with waveform</title>
+  <desc style="fill:rgb(0, 0, 0);stroke:none;color:rgb(255, 255, 255);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, &quot;system-ui&quot;, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto">The NR lettermark for NoxReach: geometric N and R in deep navy/dark, cyan waveform cutting through the R counter, with NOXREACH wordmark below</desc>
+
+  <defs>
+    
+  </defs>
+
+  <!-- N letterform — geometric, sharp, no serifs -->
+  <!-- Left vertical stroke -->
+  <rect x="190" y="60" width="22" height="130" rx="2" style="fill:rgb(240, 239, 255);stroke:none;color:rgb(255, 255, 255);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, &quot;system-ui&quot;, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto"/>
+  <!-- Right vertical stroke -->
+  <rect x="290" y="60" width="22" height="130" rx="2" style="fill:rgb(240, 239, 255);stroke:none;color:rgb(255, 255, 255);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, &quot;system-ui&quot;, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto"/>
+  <!-- Diagonal — top-left to bottom-right, drawn as a parallelogram -->
+  <polygon points="190,60 212,60 312,190 290,190" style="fill:rgb(240, 239, 255);stroke:none;color:rgb(255, 255, 255);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, &quot;system-ui&quot;, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto"/>
+
+  <!-- R letterform — sits tight to N -->
+  <!-- Vertical stem of R -->
+  <rect x="322" y="60" width="22" height="130" rx="2" style="fill:rgb(208, 205, 255);stroke:none;color:rgb(255, 255, 255);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, &quot;system-ui&quot;, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto"/>
+  <!-- Curved bowl of R (upper bump) — approximated with a trapezoid + arc feel -->
+  <path d="M344,60 Q408,60 408,100 Q408,140 344,140 L344,60Z" rx="2" style="fill:rgb(208, 205, 255);stroke:none;color:rgb(255, 255, 255);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, &quot;system-ui&quot;, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto"/>
+  <!-- Inner white cutout to make bowl hollow -->
+  <path fill="#ffffff" d="M354,72 Q392,72 392,100 Q392,128 354,128 L354,72Z" style="fill:rgb(255, 255, 255);stroke:none;color:rgb(255, 255, 255);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, &quot;system-ui&quot;, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto"/>
+  <!-- R leg — cyan accent, diagonal kick -->
+  <polygon points="344,140 370,140 420,190 394,190" style="fill:rgb(0, 200, 248);stroke:none;color:rgb(255, 255, 255);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, &quot;system-ui&quot;, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto"/>
+
+  <!-- Waveform cutting through R bowl horizontally -->
+  <!-- Left flat lead-in line -->
+  <line x1="254" y1="100" x2="330" y2="100" style="fill:none;stroke:rgb(0, 200, 248);color:rgb(255, 255, 255);stroke-width:1.4px;stroke-linecap:round;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, &quot;system-ui&quot;, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto"/>
+  <!-- Waveform spike group -->
+  <polyline points="330,100 342,100 350,78 358,122 366,82 374,118 382,100 415,100" style="fill:none;stroke:rgb(0, 200, 248);color:rgb(255, 255, 255);stroke-width:2.2px;stroke-linecap:round;stroke-linejoin:round;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, &quot;system-ui&quot;, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto"/>
+
+  <!-- Wordmark -->
+  <text x="340" y="240" text-anchor="middle" style="fill:rgb(240, 239, 255);stroke:none;color:rgb(255, 255, 255);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;DM Sans&quot;, Arial, sans-serif;font-size:28px;font-weight:700;text-anchor:middle;dominant-baseline:auto">
+    <tspan style="fill:rgb(240, 239, 255);stroke:none;color:rgb(255, 255, 255);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;DM Sans&quot;, Arial, sans-serif;font-size:28px;font-weight:700;text-anchor:middle;dominant-baseline:auto">NOX</tspan><tspan style="fill:rgb(0, 200, 248);stroke:none;color:rgb(255, 255, 255);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;DM Sans&quot;, Arial, sans-serif;font-size:28px;font-weight:700;text-anchor:middle;dominant-baseline:auto">R</tspan><tspan style="fill:rgb(240, 239, 255);stroke:none;color:rgb(255, 255, 255);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;DM Sans&quot;, Arial, sans-serif;font-size:28px;font-weight:700;text-anchor:middle;dominant-baseline:auto">EACH</tspan>
+  </text>
+
+</svg>
