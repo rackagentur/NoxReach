@@ -538,6 +538,15 @@ function LeadCard({ lead, onMove, onSelect, isSelected, onArchive, searchQuery, 
   const handleLogBlur = () => { if (contactLog !== (lead.contactLog || "")) { onUpdateLead && onUpdateLead(lead.id, { contactLog }); setLogSaved(true); setTimeout(() => setLogSaved(false), 1500); } };
   const stageIndex = STAGES.findIndex(s => s.id === lead.stage);
   const isOverdue  = lead.followUpDate && new Date(lead.followUpDate) <= new Date();
+  const STAGE_COLORS = {
+    target:    "#444444",
+    contacted: "#3B82F6",
+    followup1: "#7B3FE4",
+    followup2: "#7B3FE4",
+    replied:   "#00D4FF",
+    booked:    "#D4AF37",
+  };
+  const stageBorder = STAGE_COLORS[lead.stage] || COLORS.border;
 
   // Highlight matching text
   const highlight = (text) => {
@@ -559,7 +568,7 @@ function LeadCard({ lead, onMove, onSelect, isSelected, onArchive, searchQuery, 
         <div onClick={(e) => { if (e.target === e.currentTarget || !e.target.closest('button')) { onSelect(isSelected ? null : lead); } }} style={{
 
       background: isSelected ? COLORS.purpleBg : COLORS.surface,
-      border: `1px solid ${isSelected ? COLORS.purple : isOverdue && !lead.archived ? COLORS.gold + "66" : COLORS.border}`,
+      border: `1px solid ${isSelected ? COLORS.purple : isOverdue && !lead.archived ? COLORS.gold : lead.archived ? COLORS.border : stageBorder + "99"}`,
       borderRadius: 10, padding: "14px 16px", cursor: "pointer",
       transition: "all 0.15s ease", position: "relative", overflow: "hidden",
       opacity: lead.archived ? 0.45 : 1,
