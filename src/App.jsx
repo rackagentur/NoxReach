@@ -2797,6 +2797,10 @@ function NoxReachApp({ user, session, supabase }) {
     } else if (FOLLOWUP_MESSAGES[newStage]) {
       showToast(FOLLOWUP_MESSAGES[newStage], ["booked","replied"].includes(newStage) ? "success" : "schedule");
     }
+    if (newStage === "booked") {
+      const bookedLead = leads.find(l => l.id === leadId);
+      setTimeout(() => setReviewNudge(bookedLead), 1800);
+    }
     // Persist to Supabase
     try {
       const updated = update(leads.find(l => l.id === leadId) || {});
