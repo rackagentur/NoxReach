@@ -592,7 +592,7 @@ function LeadCard({ lead, onMove, onSelect, isSelected, onArchive, searchQuery, 
 
 // ─── Pipeline View ────────────────────────────────────────────────────────────
 
-function PipelineView({ leads, onMove, onSelect, selectedLead, onArchive, search, filters, TAG_COLORS, customTags }) {
+function PipelineView({ leads, onMove, onSelect, selectedLead, onArchive, search, filters, TAG_COLORS, customTags, onUpdateLead }) {
   const [showArchived, setShowArchived] = useState(false);
 
   const applyFilters = (list) => list.filter(l => {
@@ -640,7 +640,7 @@ function PipelineView({ leads, onMove, onSelect, selectedLead, onArchive, search
           ) : (
             <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(220px, 1fr))", gap: 10 }}>
               {archivedLeads.map(lead => (
-                <LeadCard key={lead.id} lead={lead} onMove={onMove} onSelect={onSelect} isSelected={selectedLead?.id === lead.id} onArchive={onArchive} searchQuery={search} TAG_COLORS={TAG_COLORS} />
+                <LeadCard key={lead.id} lead={lead} onMove={onMove} onSelect={onSelect} isSelected={selectedLead?.id === lead.id} onArchive={onArchive} searchQuery={search} TAG_COLORS={TAG_COLORS} onUpdateLead={onUpdateLead} />
               ))}
             </div>
           )}
@@ -667,7 +667,7 @@ function PipelineView({ leads, onMove, onSelect, selectedLead, onArchive, search
                 </div>
                 <div style={{ display: "flex", flexDirection: "column", gap: 8, minHeight: 100 }}>
                   {colLeads.map(lead => (
-                    <LeadCard key={lead.id} lead={lead} onMove={onMove} onSelect={onSelect} isSelected={selectedLead?.id === lead.id} onArchive={onArchive} searchQuery={search} TAG_COLORS={TAG_COLORS} />
+                    <LeadCard key={lead.id} lead={lead} onMove={onMove} onSelect={onSelect} isSelected={selectedLead?.id === lead.id} onArchive={onArchive} searchQuery={search} TAG_COLORS={TAG_COLORS} onUpdateLead={onUpdateLead} />
                   ))}
                   {colLeads.length === 0 && (
                     <div style={{ border: `1px dashed ${COLORS.border}`, borderRadius: 10, padding: "24px 16px", textAlign: "center", color: COLORS.textMuted, fontSize: 11 }}>
@@ -2818,7 +2818,6 @@ function NoxReachApp({ user, session, supabase }) {
   const [showAddModal, setShowAddModal] = useState(false);
   const [showResetConfirm, setShowResetConfirm] = useState(false);
   const [reviewNudge, setReviewNudge] = useState(null);
-  const [outreachPrompt, setOutreachPrompt] = useState(null);
   const [toast, setToast]               = useState(null);
 
   // Search + filter state lives here so header can own the bar
@@ -2885,10 +2884,6 @@ function NoxReachApp({ user, session, supabase }) {
     } else if (FOLLOWUP_MESSAGES[newStage]) {
       showToast(FOLLOWUP_MESSAGES[newStage], ["booked","replied"].includes(newStage) ? "success" : "schedule");
     }
-    if (["contacted","followup1","followup2"].includes(newStage)) {
-      const promptLead = leads.find(l => l.id === leadId) || { id: leadId, name: "this venue", contact: "" };
-      setTimeout(() => setOutreachPrompt(promptLead), 600);
-    }
     if (newStage === "booked") {
       const bookedLead = leads.find(l => l.id === leadId) || { id: leadId, name: "this venue" };
       setReviewNudge(bookedLead);
@@ -2902,6 +2897,19 @@ function NoxReachApp({ user, session, supabase }) {
         follow_up_date: updated.followUpDate,
       }).eq("id", leadId).eq("user_id", user.id);
     } catch (err) { console.error("moveLead sync failed:", err); }
+  };
+
+  const updateLeadField = async (leadId, fields) => {
+    setLeads(prev => prev.map(l => l.id === leadId ? { ...l, ...fields } : l));
+    if (selectedLead?.id === leadId) setSelectedLead(prev => ({ ...prev, ...fields }));
+    try {
+      const dbFields = {};
+      if (fields.outreachMethod !== undefined) dbFields.outreach_method = fields.outreachMethod;
+      if (fields.contactLog !== undefined) dbFields.contact_log = fields.contactLog;
+      if (Object.keys(dbFields).length > 0) {
+        await supabase.from("leads").update(dbFields).eq("id", leadId).eq("user_id", user.id);
+      }
+    } catch (err) { console.error("updateLeadField failed:", err); }
   };
 
   const archiveLead = async (leadId) => {
@@ -3023,7 +3031,6 @@ const activeLeads = leads.filter(l => !l.archived);
       {upgradeModal     && <UpgradeModal reason={upgradeModal} onClose={() => setUpgradeModal(null)} onUpgrade={handleUpgrade} />}
       {reviewNudge && <ReviewNudgeModal lead={reviewNudge} onClose={() => setReviewNudge(null)} reviewEmail="info@soundofgeez.com" />
 }
-      {outreachPrompt && <OutreachMethodModal lead={outreachPrompt} onClose={() => setOutreachPrompt(null)} templates={TEMPLATES} onSelect={(method) => { setOutreachPrompt(null); showToast("Logged: " + method, "success"); }} />}
         {showResetConfirm && (
         <div style={{ position: "fixed", inset: 0, zIndex: 1000, background: "rgba(0,0,0,0.8)", backdropFilter: "blur(6px)", display: "flex", alignItems: "center", justifyContent: "center" }} onClick={e => e.target === e.currentTarget && setShowResetConfirm(false)}>
           <div style={{ background: COLORS.surface, border: `1px solid ${COLORS.borderBright}`, borderRadius: 16, padding: 28, width: 360, maxWidth: "90vw", boxShadow: "0 24px 80px rgba(0,0,0,0.6)" }}>
@@ -3192,7 +3199,7 @@ const activeLeads = leads.filter(l => !l.archived);
           )}
           {activeTab === "pipeline"  && (
             <>
-              <PipelineView leads={leads} onMove={moveLead} onSelect={setSelectedLead} selectedLead={selectedLead} onArchive={archiveLead} search={search} filters={filters} TAG_COLORS={TAG_COLORS} customTags={customTags} />
+              <PipelineView leads={leads} onMove={moveLead} onSelect={setSelectedLead} selectedLead={selectedLead} onArchive={archiveLead} search={search} filters={filters} TAG_COLORS={TAG_COLORS} customTags={customTags} onUpdateLead={updateLeadField} />
               {selectedLead && <LeadDetail lead={selectedLead} onClose={() => setSelectedLead(null)} onMove={moveLead} onArchive={archiveLead} onDelete={deleteLead} onUpdate={u => { setLeads(p => p.map(l => l.id === u.id ? u : l)); setSelectedLead(u); }} supabase={supabase} userId={user.id} />}
             </>
           )}
