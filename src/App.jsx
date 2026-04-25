@@ -2800,7 +2800,8 @@ function NoxReachApp({ user, session, supabase }) {
     }
     if (newStage === "booked") {
       const bookedLead = leads.find(l => l.id === leadId) || { id: leadId, name: "this venue" };
-      setTimeout(() => setReviewNudge(bookedLead), 1800);
+      console.log("BOOKED TRIGGER", bookedLead);
+      setReviewNudge(bookedLead);
     }
     // Persist to Supabase
     try {
