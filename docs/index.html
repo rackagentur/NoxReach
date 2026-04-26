@@ -933,12 +933,19 @@
         style="padding:8px 20px;border-radius:8px;border:1px solid #1c1c2e;background:transparent;color:#9090a8;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;">
         Assets
       </button>
+      <button onclick="showTab('dashboard')" id="tab-dashboard"
+        style="padding:8px 20px;border-radius:8px;border:1px solid #1c1c2e;background:transparent;color:#9090a8;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;">
+        Dashboard
+      </button>
     </div>
     <div style="position:relative;border-radius:14px;overflow:hidden;border:1px solid #1c1c2e;box-shadow:0 24px 80px rgba(0,0,0,0.6);">
 <div id="shot-pipeline" style="width:100%;display:block;">
   <img src="https://rackagentur.github.io/NoxReach/public/pipeline-view.png" alt="Pipeline" style="width:100%;display:block;border-radius:0;" />
 </div>
 
+<div id="shot-dashboard" style="width:100%;display:none;">
+  <img src="https://rackagentur.github.io/NoxReach/public/dashboard-view.png" alt="Dashboard" style="width:100%;display:block;border-radius:0;" />
+</div>
 <div id="shot-replyhub" style="width:100%;display:none;">
   <img src="https://rackagentur.github.io/NoxReach/public/reply-hub-open.png" alt="Reply Hub" style="width:100%;display:block;border-radius:0;" />
 </div>
@@ -1541,7 +1548,7 @@
   document.querySelectorAll('.fade-up').forEach(el => obs.observe(el));
 
   function showTab(name) {
-    ['pipeline','replyhub','assets'].forEach(function(t) {
+    ['pipeline','replyhub','assets','dashboard'].forEach(function(t) {
       document.getElementById('shot-' + t).style.display = t === name ? 'block' : 'none';
       var btn = document.getElementById('tab-' + t);
       if (t === name) { btn.style.border='1px solid #6B2FD4'; btn.style.background='#0F0820'; btn.style.color='#8B4FFF'; }
