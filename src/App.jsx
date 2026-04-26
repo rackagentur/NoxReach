@@ -3170,9 +3170,9 @@ const activeLeads = leads.filter(l => !l.archived);
       {/* Sidebar */}
       <div style={{ position: "fixed", left: 0, top: 0, bottom: 0, width: 220, background: COLORS.surface, borderRight: `1px solid ${COLORS.border}`, display: isMobile ? "none" : "flex", flexDirection: "column", zIndex: 100 }}>
         <div style={{ padding: "24px 20px 20px", borderBottom: `1px solid ${COLORS.border}` }}>
-          <a href="https://rackagentur.github.io/NoxReach/" target="_blank" rel="noopener noreferrer" style={{ textDecoration: "none", display: "flex", alignItems: "center", gap: 12 }}>
-            <img src="/nr-icon.png" alt="NoxReach" style={{ width: 42, height: 42, borderRadius: 10, flexShrink: 0 }} />
-            <img src="/nr-wordmark.png" alt="NoxReach" style={{ height: 18, objectFit: "contain" }} />
+          <a href="https://rackagentur.github.io/NoxReach/" target="_blank" rel="noopener noreferrer" style={{ textDecoration: "none", display: "flex", flexDirection: "column", alignItems: "center", gap: 7 }}>
+            <img src="/nr-icon.png" alt="NoxReach" style={{ width: 44, height: 44, borderRadius: 11, flexShrink: 0 }} />
+            <img src="/nr-wordmark.png" alt="NoxReach" style={{ height: 14, objectFit: "contain", opacity: 0.7 }} />
           </a>
         </div>
         <nav style={{ padding: "16px 12px", flex: 1 }}>
