@@ -874,13 +874,13 @@
         style="padding:8px 20px;border-radius:8px;border:1px solid #6B2FD4;background:#0F0820;color:#8B4FFF;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;">
         Pipeline
       </button>
-      <button onclick="showTab('dashboard')" id="tab-dashboard"
+      <button onclick="showTab('replyhub')" id="tab-replyhub"
         style="padding:8px 20px;border-radius:8px;border:1px solid #1c1c2e;background:transparent;color:#9090a8;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;">
-        Dashboard
+        Reply Hub
       </button>
-      <button onclick="showTab('followups')" id="tab-followups"
+      <button onclick="showTab('assets')" id="tab-assets"
         style="padding:8px 20px;border-radius:8px;border:1px solid #1c1c2e;background:transparent;color:#9090a8;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;">
-        Follow-ups
+        Assets
       </button>
     </div>
     <div style="position:relative;border-radius:14px;overflow:hidden;border:1px solid #1c1c2e;box-shadow:0 24px 80px rgba(0,0,0,0.6);">
@@ -980,6 +980,12 @@
       </div>
     </div>
   </div>
+</div>
+<div id="shot-replyhub" style="width:100%;display:none;">
+  <img src="https://rackagentur.github.io/NoxReach/public/reply-hub-open.png" alt="Reply Hub" style="width:100%;display:block;border-radius:0;" />
+</div>
+<div id="shot-assets" style="width:100%;display:none;">
+  <img src="https://rackagentur.github.io/NoxReach/public/assets-view.png" alt="Assets" style="width:100%;display:block;border-radius:0;" />
 </div>
 <div id="shot-dashboard" style="width:100%;display:none;background:#0f0f18;border-radius:0;padding:0;">
   <div style="background:#0a0a10;padding:10px 16px;display:flex;align-items:center;gap:10px;border-bottom:1px solid #1c1c2e;">
@@ -1526,7 +1532,7 @@
   document.querySelectorAll('.fade-up').forEach(el => obs.observe(el));
 
   function showTab(name) {
-    ['pipeline','dashboard','followups'].forEach(function(t) {
+    ['pipeline','replyhub','assets'].forEach(function(t) {
       document.getElementById('shot-' + t).style.display = t === name ? 'block' : 'none';
       var btn = document.getElementById('tab-' + t);
       if (t === name) { btn.style.border='1px solid #6B2FD4'; btn.style.background='#0F0820'; btn.style.color='#8B4FFF'; }
