@@ -935,103 +935,10 @@
       </button>
     </div>
     <div style="position:relative;border-radius:14px;overflow:hidden;border:1px solid #1c1c2e;box-shadow:0 24px 80px rgba(0,0,0,0.6);">
-<div id="shot-pipeline" style="width:100%;display:block;background:#0f0f18;border-radius:0;padding:0;">
-  <!-- Browser chrome -->
-  <div style="background:#0a0a10;padding:10px 16px;display:flex;align-items:center;gap:10px;border-bottom:1px solid #1c1c2e;">
-    <div style="display:flex;gap:6px;"><div style="width:10px;height:10px;border-radius:50%;background:#ef4444;opacity:0.7"></div><div style="width:10px;height:10px;border-radius:50%;background:#f59e0b;opacity:0.7"></div><div style="width:10px;height:10px;border-radius:50%;background:#22c55e;opacity:0.7"></div></div>
-    <div style="flex:1;background:#060608;border-radius:6px;padding:4px 12px;font-size:10px;color:#50506a;font-family:'DM Mono',monospace;">noxreach-nox.vercel.app</div>
-  </div>
-  <!-- App layout -->
-  <div style="display:flex;min-height:420px;">
-    <!-- Sidebar -->
-    <div style="width:160px;background:#111111;border-right:1px solid #1e1e1e;padding:16px 12px;flex-shrink:0;">
-      <div style="display:flex;align-items:center;gap:8px;margin-bottom:20px;padding-bottom:14px;border-bottom:1px solid #1e1e1e;">
-        <div style="width:24px;height:24px;border-radius:6px;background:linear-gradient(135deg,#6B2FD4,#8B4FFF);display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:800;color:#fff;">NR</div>
-        <span style="font-size:11px;font-weight:700;color:#f0f0f0;letter-spacing:0.06em;">NOXREACH</span>
-      </div>
-      <div style="font-size:9px;color:#9090a8;padding:4px 8px;margin-bottom:4px;">▣ Dashboard</div>
-      <div style="font-size:9px;color:#8B4FFF;background:#0F0820;border:1px solid #3A1A80;border-radius:6px;padding:6px 8px;margin-bottom:4px;font-weight:700;">⬛ Pipeline</div>
-      <div style="font-size:9px;color:#9090a8;padding:4px 8px;margin-bottom:4px;">⏰ Follow-ups <span style="background:#D4AF37;color:#000;border-radius:8px;padding:1px 5px;font-size:8px;font-weight:800;margin-left:4px;">2</span></div>
-      <div style="font-size:9px;color:#9090a8;padding:4px 8px;margin-bottom:4px;">✉ Reply Hub</div>
-      <div style="font-size:9px;color:#9090a8;padding:4px 8px;margin-bottom:16px;">📅 Calendar</div>
-      <div style="font-size:8px;color:#00D4FF;padding:0 8px;margin-bottom:6px;letter-spacing:0.1em;opacity:0.6;">RESOURCES</div>
-      <div style="font-size:9px;color:#9090a8;padding:4px 8px;">✦ Outreach</div>
-      <div style="font-size:9px;color:#9090a8;padding:4px 8px;">◇ Assets</div>
-      <div style="font-size:9px;color:#9090a8;padding:4px 8px;">⚙ Settings</div>
-    </div>
-    <!-- Main content -->
-    <div style="flex:1;padding:20px 24px;overflow:hidden;">
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
-        <div><div style="font-size:16px;font-weight:800;color:#f0f0f0;">Pipeline</div><div style="font-size:10px;color:#888;">26 leads</div></div>
-        <div style="display:flex;gap:8px;align-items:center;">
-          <div style="padding:5px 10px;background:rgba(212,175,55,0.2);border:1px solid rgba(212,175,55,0.4);border-radius:7px;font-size:10px;color:#D4AF37;font-weight:700;">⏰ 2 follow-ups due</div>
-          <div style="padding:6px 14px;background:#6B2FD4;border-radius:7px;font-size:10px;color:#fff;font-weight:700;">+ Add Lead</div>
-        </div>
-      </div>
-      <!-- Filter bar -->
-      <div style="display:flex;gap:6px;margin-bottom:14px;flex-wrap:wrap;">
-        <span style="font-size:8px;color:#444;text-transform:uppercase;margin-right:4px;align-self:center;">Filter</span>
-        <span style="font-size:8px;padding:3px 8px;border-radius:10px;border:1px solid #D4AF37;color:#D4AF37;background:rgba(212,175,55,0.1);">A1</span>
-        <span style="font-size:8px;padding:3px 8px;border-radius:10px;border:1px solid #1e1e1e;color:#888;">A2</span>
-        <span style="font-size:8px;padding:3px 8px;border-radius:10px;border:1px solid #1e1e1e;color:#888;">Tech-House</span>
-        <span style="font-size:8px;padding:3px 8px;border-radius:10px;border:1px solid #1e1e1e;color:#888;">Circuit</span>
-        <span style="font-size:8px;padding:3px 8px;border-radius:10px;border:1px solid #1e1e1e;color:#888;">Target</span>
-        <span style="font-size:8px;padding:3px 8px;border-radius:10px;border:1px solid #9B5FFF;color:#9B5FFF;background:rgba(155,95,255,0.1);">Follow-up</span>
-        <span style="font-size:8px;padding:3px 8px;border-radius:10px;border:1px solid #1e1e1e;color:#888;">Booked</span>
-      </div>
-      <!-- Pipeline columns -->
-      <div style="display:flex;gap:10px;overflow:hidden;">
-        <!-- Target -->
-        <div style="flex:1;min-width:0;">
-          <div style="display:flex;justify-content:space-between;margin-bottom:8px;"><div style="display:flex;align-items:center;gap:6px;"><div style="width:7px;height:7px;border-radius:50%;background:#444;"></div><span style="font-size:9px;font-weight:700;color:#888;text-transform:uppercase;">Target</span></div><span style="font-size:9px;color:#888;font-family:monospace;">8</span></div>
-          <div style="background:#111;border:1px solid #1e1e1e;border-radius:8px;padding:10px;margin-bottom:6px;">
-            <div style="display:flex;justify-content:space-between;margin-bottom:5px;"><span style="font-size:10px;font-weight:700;color:#f0f0f0;">Berghain</span><span style="font-size:8px;padding:1px 5px;border-radius:3px;background:rgba(212,175,55,0.2);color:#D4AF37;border:1px solid rgba(212,175,55,0.3);">A1</span></div>
-            <span style="font-size:8px;padding:2px 6px;border-radius:3px;background:rgba(107,47,212,0.2);color:#8B4FFF;">Tech-House</span>
-            <div style="margin-top:8px;display:flex;gap:4px;"><div style="flex:2;padding:4px;background:rgba(107,47,212,0.2);border:1px solid rgba(107,47,212,0.3);border-radius:5px;font-size:8px;color:#8B4FFF;font-weight:700;text-align:center;">Advance →</div></div>
-          </div>
-          <div style="background:#111;border:1px solid rgba(212,175,55,0.4);border-radius:8px;padding:10px;position:relative;">
-            <div style="position:absolute;top:0;right:0;background:#D4AF37;color:#000;font-size:7px;font-weight:800;padding:1px 6px;border-bottom-left-radius:5px;">FOLLOW UP</div>
-            <div style="display:flex;justify-content:space-between;margin-bottom:5px;"><span style="font-size:10px;font-weight:700;color:#f0f0f0;">Fabric London</span><span style="font-size:8px;padding:1px 5px;border-radius:3px;background:rgba(107,47,212,0.2);color:#8B4FFF;border:1px solid rgba(107,47,212,0.3);">A2</span></div>
-            <span style="font-size:8px;padding:2px 6px;border-radius:3px;background:rgba(59,130,246,0.2);color:#60A5FA;">Disco</span>
-          </div>
-        </div>
-        <!-- Contacted -->
-        <div style="flex:1;min-width:0;">
-          <div style="display:flex;justify-content:space-between;margin-bottom:8px;"><div style="display:flex;align-items:center;gap:6px;"><div style="width:7px;height:7px;border-radius:50%;background:#7B3FE4;"></div><span style="font-size:9px;font-weight:700;color:#888;text-transform:uppercase;">Contacted</span></div><span style="font-size:9px;color:#888;font-family:monospace;">4</span></div>
-          <div style="background:#111;border:1px solid #1e1e1e;border-radius:8px;padding:10px;margin-bottom:6px;">
-            <div style="display:flex;justify-content:space-between;margin-bottom:5px;"><span style="font-size:10px;font-weight:700;color:#f0f0f0;">Tresor Berlin</span><span style="font-size:8px;padding:1px 5px;border-radius:3px;background:rgba(212,175,55,0.2);color:#D4AF37;border:1px solid rgba(212,175,55,0.3);">A1</span></div>
-            <span style="font-size:8px;padding:2px 6px;border-radius:3px;background:rgba(107,47,212,0.2);color:#8B4FFF;">Tech-House</span>
-            <div style="margin-top:8px;display:flex;gap:4px;"><div style="flex:1;padding:4px;border:1px solid #1e1e1e;border-radius:5px;font-size:8px;color:#888;text-align:center;">← Back</div><div style="flex:2;padding:4px;background:rgba(107,47,212,0.2);border:1px solid rgba(107,47,212,0.3);border-radius:5px;font-size:8px;color:#8B4FFF;font-weight:700;text-align:center;">Advance →</div></div>
-          </div>
-        </div>
-        <!-- Follow-up -->
-        <div style="flex:1;min-width:0;">
-          <div style="display:flex;justify-content:space-between;margin-bottom:8px;"><div style="display:flex;align-items:center;gap:6px;"><div style="width:7px;height:7px;border-radius:50%;background:#9B5FFF;"></div><span style="font-size:9px;font-weight:700;color:#888;text-transform:uppercase;">Follow-up</span></div><span style="font-size:9px;color:#888;font-family:monospace;">1</span></div>
-          <div style="background:#111;border:1px solid rgba(212,175,55,0.4);border-radius:8px;padding:10px;">
-            <div style="display:flex;justify-content:space-between;margin-bottom:5px;"><span style="font-size:10px;font-weight:700;color:#f0f0f0;">Output NYC ⏰</span><span style="font-size:8px;padding:1px 5px;border-radius:3px;background:rgba(212,175,55,0.2);color:#D4AF37;border:1px solid rgba(212,175,55,0.3);">A1</span></div>
-            <span style="font-size:8px;padding:2px 6px;border-radius:3px;background:rgba(212,175,55,0.15);color:#D4AF37;">Due today</span>
-          </div>
-        </div>
-        <!-- Replied -->
-        <div style="flex:1;min-width:0;">
-          <div style="display:flex;justify-content:space-between;margin-bottom:8px;"><div style="display:flex;align-items:center;gap:6px;"><div style="width:7px;height:7px;border-radius:50%;background:#22C55E;"></div><span style="font-size:9px;font-weight:700;color:#888;text-transform:uppercase;">Replied</span></div><span style="font-size:9px;color:#888;font-family:monospace;">1</span></div>
-          <div style="background:#111;border:1px solid rgba(34,197,94,0.3);border-radius:8px;padding:10px;">
-            <div style="display:flex;justify-content:space-between;margin-bottom:5px;"><span style="font-size:10px;font-weight:700;color:#f0f0f0;">BPM Festival 🔥</span><span style="font-size:8px;padding:1px 5px;border-radius:3px;background:rgba(212,175,55,0.2);color:#D4AF37;border:1px solid rgba(212,175,55,0.3);">A1</span></div>
-            <span style="font-size:8px;color:#22C55E;">Awaiting EPK</span>
-          </div>
-        </div>
-        <!-- Booked -->
-        <div style="flex:1;min-width:0;">
-          <div style="display:flex;justify-content:space-between;margin-bottom:8px;"><div style="display:flex;align-items:center;gap:6px;"><div style="width:7px;height:7px;border-radius:50%;background:#D4AF37;box-shadow:0 0 6px rgba(212,175,55,0.5);"></div><span style="font-size:9px;font-weight:700;color:#D4AF37;text-transform:uppercase;">Booked</span></div><span style="font-size:9px;color:#888;font-family:monospace;">1</span></div>
-          <div style="background:#111;border:1px solid rgba(212,175,55,0.4);border-radius:8px;padding:10px;">
-            <div style="display:flex;justify-content:space-between;margin-bottom:5px;"><span style="font-size:10px;font-weight:700;color:#f0f0f0;">Alegria NYC</span><span style="font-size:8px;padding:1px 5px;border-radius:3px;background:rgba(212,175,55,0.2);color:#D4AF37;border:1px solid rgba(212,175,55,0.3);">A1</span></div>
-            <span style="font-size:8px;color:#D4AF37;">Mar 15 · Confirmed ✓</span>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
+<div id="shot-pipeline" style="width:100%;display:block;">
+  <img src="https://rackagentur.github.io/NoxReach/public/pipeline-view.png" alt="Pipeline" style="width:100%;display:block;border-radius:0;" />
 </div>
+
 <div id="shot-replyhub" style="width:100%;display:none;">
   <img src="https://rackagentur.github.io/NoxReach/public/reply-hub-open.png" alt="Reply Hub" style="width:100%;display:block;border-radius:0;" />
 </div>
