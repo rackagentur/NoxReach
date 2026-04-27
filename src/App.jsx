@@ -3397,8 +3397,7 @@ function PublicBookingForm({ supabase }) {
     await supabase.from('leads').insert({
       user_id: djProfile.id, name: form.venue, contact: form.contact_email,
       instagram: form.instagram, stage: 'replied', tag: form.event_type || null,
-      notes: [form.message, form.date ? 'Date: ' + form.date : '', form.fee_offer ? 'Fee offer: €' + form.fee_offer : ''].filter(Boolean).join('
-'),
+      notes: [form.message, form.date ? 'Date: ' + form.date : '', form.fee_offer ? 'Fee offer: EUR' + form.fee_offer : ''].filter(Boolean).join(' | '),
       last_contact: new Date().toISOString().split('T')[0],
     });
     setSubmitting(false);
