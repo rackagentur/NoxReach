@@ -3376,7 +3376,95 @@ const activeLeads = leads.filter(l => !l.archived);
 }
 
 // ── Export default: wraps everything in AuthGate ──────────────────────────────
+function PublicBookingForm({ supabase }) {
+  const username = window.location.pathname.split('/book/')[1]?.toLowerCase().trim();
+  const [step, setStep] = useState('form');
+  const [djProfile, setDjProfile] = useState(null);
+  const [submitting, setSubmitting] = useState(false);
+  const [form, setForm] = useState({ venue: '', event_type: '', date: '', fee_offer: '', contact_email: '', instagram: '', message: '' });
+
+  useEffect(() => {
+    if (!username) { setStep('notfound'); return; }
+    supabase.from('profiles').select('id, display_name, username').eq('username', username).single()
+      .then(({ data, error }) => { if (error || !data) setStep('notfound'); else setDjProfile(data); });
+  }, [username]);
+
+  const set = k => e => setForm(f => ({ ...f, [k]: e.target.value }));
+
+  const handleSubmit = async () => {
+    if (!form.venue || !form.contact_email) return;
+    setSubmitting(true);
+    await supabase.from('leads').insert({
+      user_id: djProfile.id, name: form.venue, contact: form.contact_email,
+      instagram: form.instagram, stage: 'replied', tag: form.event_type || null,
+      notes: [form.message, form.date ? 'Date: ' + form.date : '', form.fee_offer ? 'Fee offer: €' + form.fee_offer : ''].filter(Boolean).join('
+'),
+      last_contact: new Date().toISOString().split('T')[0],
+    });
+    setSubmitting(false);
+    setStep('success');
+  };
+
+  const inp = { width: '100%', background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.12)', borderRadius: 8, padding: '11px 14px', color: '#fff', fontSize: 14, outline: 'none', boxSizing: 'border-box' };
+  const lbl = { fontSize: 12, fontWeight: 600, color: 'rgba(255,255,255,0.45)', letterSpacing: '0.08em', textTransform: 'uppercase', display: 'block', marginBottom: 6 };
+
+  if (!djProfile && step !== 'notfound') return (
+    <div style={{ minHeight: '100vh', background: '#0a0a0a', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+      <div style={{ color: 'rgba(255,255,255,0.3)', fontSize: 14 }}>Loading...</div>
+    </div>
+  );
+
+  if (step === 'notfound') return (
+    <div style={{ minHeight: '100vh', background: '#0a0a0a', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: '-apple-system, sans-serif' }}>
+      <div style={{ textAlign: 'center' }}><div style={{ fontSize: 48, color: '#fff', marginBottom: 16 }}>404</div><div style={{ color: 'rgba(255,255,255,0.4)', fontSize: 16 }}>Booking page not found</div></div>
+    </div>
+  );
+
+  if (step === 'success') return (
+    <div style={{ minHeight: '100vh', background: '#0a0a0a', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: '-apple-system, sans-serif', padding: 24 }}>
+      <div style={{ textAlign: 'center', maxWidth: 480 }}>
+        <img src="https://rackagentur.github.io/NoxReach/public/nr-icon.png" width="48" height="48" style={{ borderRadius: 12, marginBottom: 24 }} alt="NR" />
+        <div style={{ fontSize: 28, fontWeight: 700, color: '#fff', marginBottom: 12 }}>Booking request sent</div>
+        <div style={{ fontSize: 16, color: 'rgba(255,255,255,0.5)', lineHeight: 1.6, marginBottom: 32 }}>{djProfile.display_name} will review your request and get back to you soon.</div>
+        <div style={{ fontSize: 13, color: 'rgba(255,255,255,0.25)' }}>Powered by NoxReach</div>
+      </div>
+    </div>
+  );
+
+  return (
+    <div style={{ minHeight: '100vh', background: '#0a0a0a', fontFamily: '-apple-system, sans-serif', padding: '40px 24px' }}>
+      <div style={{ maxWidth: 520, margin: '0 auto' }}>
+        <div style={{ textAlign: 'center', marginBottom: 40 }}>
+          <img src="https://rackagentur.github.io/NoxReach/public/nr-icon.png" width="44" height="44" style={{ borderRadius: 11, marginBottom: 16 }} alt="NR" />
+          <div style={{ fontSize: 24, fontWeight: 700, color: '#fff', marginBottom: 6 }}>Book {djProfile.display_name}</div>
+          <div style={{ fontSize: 14, color: 'rgba(255,255,255,0.4)' }}>Fill out the form and we will get back to you</div>
+        </div>
+        <div style={{ background: '#111', border: '1px solid rgba(255,255,255,0.08)', borderRadius: 16, padding: 28, display: 'flex', flexDirection: 'column', gap: 20 }}>
+          <div><label style={lbl}>Venue / Event name *</label><input style={inp} value={form.venue} onChange={set('venue')} placeholder="e.g. Berghain, Pride Amsterdam" /></div>
+          <div><label style={lbl}>Event type</label>
+            <select style={{ ...inp, colorScheme: 'dark' }} value={form.event_type} onChange={set('event_type')}>
+              <option value="">Select type...</option>
+              <option>Club Night</option><option>Festival</option><option>Pride / CSD</option><option>Circuit Festival</option><option>Private Event</option><option>Other</option>
+            </select>
+          </div>
+          <div><label style={lbl}>Event date</label><input style={{ ...inp, colorScheme: 'dark' }} type="date" value={form.date} onChange={set('date')} /></div>
+          <div><label style={lbl}>Fee offer (€)</label><input style={inp} type="number" value={form.fee_offer} onChange={set('fee_offer')} placeholder="e.g. 800" /></div>
+          <div><label style={lbl}>Your email *</label><input style={inp} type="email" value={form.contact_email} onChange={set('contact_email')} placeholder="booker@venue.com" /></div>
+          <div><label style={lbl}>Instagram</label><input style={inp} value={form.instagram} onChange={set('instagram')} placeholder="@venuename" /></div>
+          <div><label style={lbl}>Message</label><textarea style={{ ...inp, minHeight: 90, resize: 'vertical' }} value={form.message} onChange={set('message')} placeholder="Tell us about the event, expected crowd, set time..." /></div>
+          <button onClick={handleSubmit} disabled={submitting || !form.venue || !form.contact_email}
+            style={{ background: '#D4AF37', color: '#0a0a0a', border: 'none', borderRadius: 8, padding: '14px 24px', fontSize: 15, fontWeight: 700, cursor: submitting ? 'wait' : 'pointer', opacity: (!form.venue || !form.contact_email) ? 0.5 : 1 }}>
+            {submitting ? 'Sending...' : 'Send booking request'}
+          </button>
+        </div>
+        <div style={{ textAlign: 'center', marginTop: 20, fontSize: 12, color: 'rgba(255,255,255,0.2)' }}>Powered by NoxReach</div>
+      </div>
+    </div>
+  );
+}
+
 export default function NoxReach() {
+  if (window.location.pathname.startsWith('/book/')) return <PublicBookingForm supabase={supabase} />;
   return (
     <AuthGate>
       {({ user, session, supabase }) => (
