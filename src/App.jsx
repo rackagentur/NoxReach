@@ -116,6 +116,7 @@ WebkitTextFillColor: C.text,
           <img src="https://rackagentur.github.io/NoxReach/public/nr-icon.png" width="56" height="56" style={{ borderRadius: 14, marginBottom: 12 }} alt="NR" />
           <img src="https://rackagentur.github.io/NoxReach/public/nr-wordmark.png" height="20" style={{ marginBottom: 6 }} alt="NoxReach" />
           <div style={{ fontSize: 11, color: C.cyan, letterSpacing: "0.14em", opacity: 0.8, marginTop: 2 }}>NIGHTLIFE OS</div>
+        </div>
 
         {/* Form card */}
         <div style={{
