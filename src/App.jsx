@@ -113,24 +113,9 @@ WebkitTextFillColor: C.text,
       }}>
         {/* Logo */}
         <div style={{ textAlign: "center", marginBottom: 36 }}>
-          <div style={{
-            display: "inline-flex", alignItems: "center", justifyContent: "center",
-            width: 52, height: 52, borderRadius: 14, marginBottom: 14,
-            background: `linear-gradient(135deg, ${C.purple}, ${C.purpleL})`,
-            boxShadow: `0 0 40px rgba(107,47,212,0.4)`,
-          }}>
-            <svg width="28" height="28" viewBox="0 0 32 32" fill="none">
-              <path d="M3 23V9h2.8l5.6 9.2V9H14v14h-2.8L5.6 13.8V23H3z" fill="white"/>
-              <path d="M16 9h5.2c2.1 0 3.8 1.7 3.8 3.8 0 1.5-.8 2.8-2.1 3.4L26 23h-3.2l-2.6-7.4H19V23h-3V9z M19 11.8v3.4h2.1c.7 0 1.3-.6 1.3-1.3v-.8c0-.7-.6-1.3-1.3-1.3H19z" fill="rgba(0,212,255,0.9)"/>
-            </svg>
-          </div>
-          <div style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: 28, letterSpacing: "0.06em", color: C.text }}>
-            NoxReach
-          </div>
-          <div style={{ fontSize: 11, color: C.cyan, letterSpacing: "0.14em", opacity: 0.8, marginTop: 2 }}>
-            NIGHTLIFE OS
-          </div>
-        </div>
+          <img src="https://rackagentur.github.io/NoxReach/public/nr-icon.png" width="56" height="56" style={{ borderRadius: 14, marginBottom: 12 }} alt="NR" />
+          <img src="https://rackagentur.github.io/NoxReach/public/nr-wordmark.png" height="20" style={{ marginBottom: 6 }} alt="NoxReach" />
+          <div style={{ fontSize: 11, color: C.cyan, letterSpacing: "0.14em", opacity: 0.8, marginTop: 2 }}>NIGHTLIFE OS</div>
 
         {/* Form card */}
         <div style={{
@@ -1878,6 +1863,57 @@ function ProGate({ children, isPro, reason, onUpgradeClick, label = "Pro feature
 
 // ─── Settings ─────────────────────────────────────────────────────────────────
 
+function InboundView({ leads, user }) {
+  const inbound = leads.filter(l => !l.archived && l.stage === "replied" && l.contact && l.contact.includes("@"));
+  const bookingLink = `https://noxreach-nox.vercel.app/book/${user?.email?.split("@")[0]?.toLowerCase().replace(/[^a-z0-9]/g, "") || ""}`;
+  const [copied, setCopied] = React.useState(false);
+  const copy = () => { navigator.clipboard.writeText(bookingLink); setCopied(true); setTimeout(() => setCopied(false), 2000); };
+
+  return (
+    <div style={{ maxWidth: 680, margin: "0 auto", padding: "0 0 40px" }}>
+      <div style={{ marginBottom: 28 }}>
+        <div style={{ fontSize: 22, fontWeight: 700, color: COLORS.text, marginBottom: 4 }}>Inbound Requests</div>
+        <div style={{ fontSize: 13, color: COLORS.textSecondary }}>Booking requests from your public form</div>
+      </div>
+
+      <div style={{ background: COLORS.surface, border: `1px solid ${COLORS.border}`, borderRadius: 14, padding: 20, marginBottom: 24 }}>
+        <div style={{ fontSize: 11, fontWeight: 700, color: COLORS.textSecondary, letterSpacing: "0.08em", textTransform: "uppercase", marginBottom: 10 }}>Your booking link</div>
+        <div style={{ display: "flex", gap: 10, alignItems: "center" }}>
+          <div style={{ flex: 1, background: COLORS.bg, border: `1px solid ${COLORS.border}`, borderRadius: 8, padding: "10px 14px", fontSize: 13, color: COLORS.textSecondary, fontFamily: "monospace", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{bookingLink}</div>
+          <button onClick={copy} style={{ background: copied ? "rgba(74,222,128,0.15)" : COLORS.purpleBg, border: `1px solid ${copied ? "rgba(74,222,128,0.3)" : COLORS.purpleDim}`, borderRadius: 8, padding: "10px 16px", color: copied ? "#4ade80" : COLORS.purpleLight, fontSize: 13, fontWeight: 600, cursor: "pointer", whiteSpace: "nowrap" }}>
+            {copied ? "Copied ✓" : "Copy link"}
+          </button>
+        </div>
+        <div style={{ fontSize: 11, color: COLORS.textMuted, marginTop: 8 }}>Share this link in your Instagram bio — promoters fill it out and requests land here automatically.</div>
+      </div>
+
+      {inbound.length === 0 ? (
+        <div style={{ background: COLORS.surface, border: `1px solid ${COLORS.border}`, borderRadius: 14, padding: "48px 24px", textAlign: "center" }}>
+          <div style={{ fontSize: 32, marginBottom: 12 }}>⬇</div>
+          <div style={{ fontSize: 15, fontWeight: 600, color: COLORS.text, marginBottom: 6 }}>No inbound requests yet</div>
+          <div style={{ fontSize: 13, color: COLORS.textSecondary }}>Share your booking link to start receiving requests from promoters.</div>
+        </div>
+      ) : (
+        <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+          {inbound.map(lead => (
+            <div key={lead.id} style={{ background: COLORS.surface, border: `1px solid ${COLORS.border}`, borderRadius: 12, padding: "14px 18px" }}>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
+                <div>
+                  <div style={{ fontSize: 14, fontWeight: 700, color: COLORS.text, marginBottom: 3 }}>{lead.name}</div>
+                  <div style={{ fontSize: 12, color: COLORS.textSecondary }}>{lead.contact}</div>
+                  {lead.instagram && <div style={{ fontSize: 12, color: COLORS.purple }}>{lead.instagram}</div>}
+                </div>
+                <div style={{ fontSize: 11, color: COLORS.textMuted }}>{lead.last_contact || "—"}</div>
+              </div>
+              {lead.notes && <div style={{ fontSize: 12, color: COLORS.textSecondary, marginTop: 8, padding: "8px 10px", background: COLORS.bg, borderRadius: 6 }}>{lead.notes}</div>}
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
 function SettingsView({ settings, onSave, isPro, onUpgradeClick, customTags, defaultTags, onAddTag, onRemoveTag }) {
   const [local, setLocal] = useState({ ...settings });
   const [saved,  setSaved]  = useState(false);
@@ -3133,6 +3169,7 @@ const activeLeads = leads.filter(l => !l.archived);
     { id: "outreach",  label: "Outreach",   icon: "✦",  group: "ref" },
     { id: "assets",    label: "Assets",     icon: "◇",  group: "ref" },
     { id: "settings",  label: "Settings",   icon: "⚙",  group: "ref" },
+    { id: "inbound",   label: "Inbound",    icon: "⬇",  group: "ref" },
   ];
 
   
@@ -3369,6 +3406,7 @@ const activeLeads = leads.filter(l => !l.archived);
           {activeTab === "calendar"  && <GigCalendarView leads={leads} gigs={gigs} setGigs={setGigs} showToast={showToast} isPro={isPro} onUpgradeClick={requestUpgrade} customTags={customTags} TAG_COLORS={TAG_COLORS} supabase={supabase} userId={user.id} />}
           {activeTab === "replyhub"  && <ReplyHubView leads={leads} onMove={moveLead} showToast={showToast} TAG_COLORS={TAG_COLORS} />}
           {activeTab === "settings"  && <SettingsView settings={settings} onSave={saveSettingsHandler} isPro={isPro} onUpgradeClick={requestUpgrade} customTags={customTags} defaultTags={DEFAULT_TAGS} onAddTag={addCustomTag} onRemoveTag={removeCustomTag} />}
+              {activeTab === "inbound"   && <InboundView leads={leads} user={user} />}
         </div>
       </div>
     </div>
