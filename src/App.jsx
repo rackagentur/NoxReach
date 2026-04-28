@@ -1931,21 +1931,36 @@ function SettingsView({ settings, onSave, isPro, onUpgradeClick, customTags, def
   const [usernameSaved, setUsernameSaved] = useState(false);
   const [usernameError, setUsernameError] = useState("");
 
+
+
+  const [displayName, setDisplayName] = useState("");
+  const [displayNameSaved, setDisplayNameSaved] = useState(false);
+
   useEffect(() => {
     if (!user?.id || !supabase) return;
-    supabase.from("profiles").select("username").eq("id", user.id).single()
-      .then(({ data }) => { if (data?.username) setUsername(data.username); });
+    supabase.from("profiles").select("username, display_name").eq("id", user.id).single()
+      .then(({ data }) => {
+        if (data?.username) setUsername(data.username);
+        if (data?.display_name) setDisplayName(data.display_name);
+      });
   }, [user?.id]);
 
   const saveUsername = async () => {
     setUsernameError("");
     const clean = username.toLowerCase().replace(/[^a-z0-9]/g, "");
     if (!clean) { setUsernameError("Username can only contain letters and numbers"); return; }
-    const { error } = await supabase.from("profiles").upsert({ id: user.id, username: clean, display_name: user.email?.split("@")[0] });
+    const { error } = await supabase.from("profiles").upsert({ id: user.id, username: clean, display_name: displayName || user.email?.split("@")[0] });
     if (error) { setUsernameError(error.message.includes("unique") ? "That username is taken" : error.message); return; }
     setUsername(clean);
     setUsernameSaved(true);
     setTimeout(() => setUsernameSaved(false), 2000);
+  };
+
+  const saveDisplayName = async () => {
+    if (!displayName.trim()) return;
+    await supabase.from("profiles").upsert({ id: user.id, display_name: displayName.trim(), username });
+    setDisplayNameSaved(true);
+    setTimeout(() => setDisplayNameSaved(false), 2000);
   };
 
   const set = key => val => setLocal(s => ({ ...s, [key]: val }));
@@ -2012,6 +2027,22 @@ function SettingsView({ settings, onSave, isPro, onUpgradeClick, customTags, def
         </div>
         {usernameError && <div style={{ fontSize: 12, color: COLORS.red, marginBottom: 6 }}>{usernameError}</div>}
         {bookingLink && <div style={{ fontSize: 11, color: COLORS.textMuted }}>Share in your Instagram bio — promoters fill it out and land in your pipeline automatically.</div>}
+        <div style={{ marginTop: 16, paddingTop: 16, borderTop: `1px solid ${COLORS.border}` }}>
+          <div style={{ fontSize: 11, fontWeight: 700, color: COLORS.textSecondary, letterSpacing: "0.08em", textTransform: "uppercase", marginBottom: 8 }}>Artist / display name</div>
+          <div style={{ display: "flex", gap: 10 }}>
+            <input
+              value={displayName}
+              onChange={e => setDisplayName(e.target.value)}
+              onKeyDown={e => e.key === "Enter" && saveDisplayName()}
+              placeholder="e.g. DJ GEEZ"
+              style={{ flex: 1, background: COLORS.bg, border: `1px solid ${COLORS.border}`, borderRadius: 8, padding: "10px 12px", fontSize: 13, color: COLORS.text, outline: "none", colorScheme: "dark" }}
+            />
+            <button onClick={saveDisplayName} style={{ background: displayNameSaved ? "rgba(74,222,128,0.15)" : COLORS.purpleBg, border: `1px solid ${displayNameSaved ? "rgba(74,222,128,0.3)" : COLORS.purpleDim}`, borderRadius: 8, padding: "10px 16px", color: displayNameSaved ? "#4ade80" : COLORS.purpleLight, fontSize: 13, fontWeight: 600, cursor: "pointer", whiteSpace: "nowrap" }}>
+              {displayNameSaved ? "Saved ✓" : "Save"}
+            </button>
+          </div>
+          <div style={{ fontSize: 11, color: COLORS.textMuted, marginTop: 6 }}>This is what promoters see on your booking form — "Book [name]"</div>
+        </div>
       </div>
 
       <div style={{ display: "flex", flexDirection: "column", gap: 24 }}>
@@ -3492,6 +3523,23 @@ function PublicBookingForm({ supabase }) {
       notes: [form.message, form.date ? 'Date: ' + form.date : '', form.fee_offer ? 'Fee offer: EUR' + form.fee_offer : ''].filter(Boolean).join(' | '),
       last_contact: new Date().toISOString().split('T')[0],
     });
+    // Fire notification emails (non-blocking)
+    try {
+      await fetch('https://ckttttvgvpvflgjzkbmy.supabase.co/functions/v1/booking-notify', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNrdHR0dHZndnB2ZmxnanprYm15Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDMxNzUyODcsImV4cCI6MjA1ODc1MTI4N30.XKFnKhHV4S3WY3qd9fQ4eEe1SOW2JtI5JNPINW6BPWU' },
+        body: JSON.stringify({
+          venue: form.venue,
+          contact_email: form.contact_email,
+          instagram: form.instagram,
+          event_type: form.event_type,
+          date: form.date,
+          fee_offer: form.fee_offer,
+          message: form.message,
+          dj_user_id: djProfile.id,
+        }),
+      });
+    } catch (e) { console.warn('Notify failed', e); }
     setSubmitting(false);
     setStep('success');
   };
