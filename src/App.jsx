@@ -1865,11 +1865,19 @@ function ProGate({ children, isPro, reason, onUpgradeClick, label = "Pro feature
 
 // ─── Settings ─────────────────────────────────────────────────────────────────
 
-function InboundView({ leads, user }) {
+function InboundView({ leads, user, supabase }) {
   const inbound = leads.filter(l => !l.archived && l.stage === "replied" && l.contact && l.contact.includes("@"));
-  const bookingLink = "https://noxreach-nox.vercel.app/book/gregorgus";
+  const [username, setUsername] = useState(null);
   const [copied, setCopied] = useState(false);
-  const copy = () => { navigator.clipboard.writeText(bookingLink); setCopied(true); setTimeout(() => setCopied(false), 2000); };
+
+  useEffect(() => {
+    if (!user?.id) return;
+    supabase.from("profiles").select("username").eq("id", user.id).single()
+      .then(({ data }) => { if (data?.username) setUsername(data.username); });
+  }, [user?.id]);
+
+  const bookingLink = username ? `https://noxreach-nox.vercel.app/book/${username}` : "Loading...";
+  const copy = () => { if (!username) return; navigator.clipboard.writeText(bookingLink); setCopied(true); setTimeout(() => setCopied(false), 2000); };
 
   return (
     <div style={{ maxWidth: 680, margin: "0 auto", padding: "0 0 40px" }}>
@@ -3408,7 +3416,7 @@ const activeLeads = leads.filter(l => !l.archived);
           {activeTab === "calendar"  && <GigCalendarView leads={leads} gigs={gigs} setGigs={setGigs} showToast={showToast} isPro={isPro} onUpgradeClick={requestUpgrade} customTags={customTags} TAG_COLORS={TAG_COLORS} supabase={supabase} userId={user.id} />}
           {activeTab === "replyhub"  && <ReplyHubView leads={leads} onMove={moveLead} showToast={showToast} TAG_COLORS={TAG_COLORS} />}
           {activeTab === "settings"  && <SettingsView settings={settings} onSave={saveSettingsHandler} isPro={isPro} onUpgradeClick={requestUpgrade} customTags={customTags} defaultTags={DEFAULT_TAGS} onAddTag={addCustomTag} onRemoveTag={removeCustomTag} />}
-              {activeTab === "inbound"   && <InboundView leads={leads} user={user} />}
+              {activeTab === "inbound"   && <InboundView leads={leads} user={user} supabase={supabase} />}
         </div>
       </div>
     </div>
