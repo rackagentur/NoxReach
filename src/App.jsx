@@ -1924,9 +1924,29 @@ function InboundView({ leads, user, supabase }) {
   );
 }
 
-function SettingsView({ settings, onSave, isPro, onUpgradeClick, customTags, defaultTags, onAddTag, onRemoveTag }) {
+function SettingsView({ settings, onSave, isPro, onUpgradeClick, customTags, defaultTags, onAddTag, onRemoveTag, supabase, user }) {
   const [local, setLocal] = useState({ ...settings });
   const [saved,  setSaved]  = useState(false);
+  const [username, setUsername] = useState("");
+  const [usernameSaved, setUsernameSaved] = useState(false);
+  const [usernameError, setUsernameError] = useState("");
+
+  useEffect(() => {
+    if (!user?.id || !supabase) return;
+    supabase.from("profiles").select("username").eq("id", user.id).single()
+      .then(({ data }) => { if (data?.username) setUsername(data.username); });
+  }, [user?.id]);
+
+  const saveUsername = async () => {
+    setUsernameError("");
+    const clean = username.toLowerCase().replace(/[^a-z0-9]/g, "");
+    if (!clean) { setUsernameError("Username can only contain letters and numbers"); return; }
+    const { error } = await supabase.from("profiles").upsert({ id: user.id, username: clean, display_name: user.email?.split("@")[0] });
+    if (error) { setUsernameError(error.message.includes("unique") ? "That username is taken" : error.message); return; }
+    setUsername(clean);
+    setUsernameSaved(true);
+    setTimeout(() => setUsernameSaved(false), 2000);
+  };
 
   const set = key => val => setLocal(s => ({ ...s, [key]: val }));
 
@@ -1937,6 +1957,7 @@ function SettingsView({ settings, onSave, isPro, onUpgradeClick, customTags, def
   };
 
   const isDirty = local.followup1Days !== settings.followup1Days || local.followup2Days !== settings.followup2Days;
+  const bookingLink = username ? `https://noxreach-nox.vercel.app/book/${username}` : "";
 
   const SliderRow = ({ label, desc, stateKey, min, max, unit = "days" }) => {
     const val = local[stateKey];
@@ -1970,6 +1991,28 @@ function SettingsView({ settings, onSave, isPro, onUpgradeClick, customTags, def
   return (
     <div style={{ maxWidth: 560 }}>
       <style>{`input[type=range]::-webkit-slider-thumb { appearance: none; width: 18px; height: 18px; border-radius: 50%; background: ${COLORS.purple}; border: 2px solid ${COLORS.purpleLight}; box-shadow: 0 0 8px rgba(123,63,228,0.5); cursor: pointer; }`}</style>
+
+      {/* Booking Link */}
+      <div style={{ background: COLORS.surface, border: `1px solid ${COLORS.border}`, borderRadius: 14, padding: 20, marginBottom: 20 }}>
+        <div style={{ fontSize: 11, fontWeight: 700, color: COLORS.textSecondary, letterSpacing: "0.08em", textTransform: "uppercase", marginBottom: 12 }}>Your booking link</div>
+        <div style={{ display: "flex", gap: 10, marginBottom: 8 }}>
+          <div style={{ display: "flex", flex: 1, background: COLORS.bg, border: `1px solid ${COLORS.border}`, borderRadius: 8, overflow: "hidden" }}>
+            <span style={{ padding: "10px 12px", fontSize: 12, color: COLORS.textMuted, borderRight: `1px solid ${COLORS.border}`, whiteSpace: "nowrap" }}>noxreach.app/book/</span>
+            <input
+              value={username}
+              onChange={e => { setUsername(e.target.value); setUsernameError(""); }}
+              onKeyDown={e => e.key === "Enter" && saveUsername()}
+              placeholder="yourname"
+              style={{ flex: 1, background: "transparent", border: "none", outline: "none", padding: "10px 12px", fontSize: 13, color: COLORS.text, colorScheme: "dark" }}
+            />
+          </div>
+          <button onClick={saveUsername} style={{ background: usernameSaved ? "rgba(74,222,128,0.15)" : COLORS.purpleBg, border: `1px solid ${usernameSaved ? "rgba(74,222,128,0.3)" : COLORS.purpleDim}`, borderRadius: 8, padding: "10px 16px", color: usernameSaved ? "#4ade80" : COLORS.purpleLight, fontSize: 13, fontWeight: 600, cursor: "pointer", whiteSpace: "nowrap" }}>
+            {usernameSaved ? "Saved ✓" : "Save"}
+          </button>
+        </div>
+        {usernameError && <div style={{ fontSize: 12, color: COLORS.red, marginBottom: 6 }}>{usernameError}</div>}
+        {bookingLink && <div style={{ fontSize: 11, color: COLORS.textMuted }}>Share in your Instagram bio — promoters fill it out and land in your pipeline automatically.</div>}
+      </div>
 
       <div style={{ display: "flex", flexDirection: "column", gap: 24 }}>
 
@@ -3415,7 +3458,7 @@ const activeLeads = leads.filter(l => !l.archived);
           {activeTab === "assets"    && <AssetsView supabase={supabase} userId={user.id} />}
           {activeTab === "calendar"  && <GigCalendarView leads={leads} gigs={gigs} setGigs={setGigs} showToast={showToast} isPro={isPro} onUpgradeClick={requestUpgrade} customTags={customTags} TAG_COLORS={TAG_COLORS} supabase={supabase} userId={user.id} />}
           {activeTab === "replyhub"  && <ReplyHubView leads={leads} onMove={moveLead} showToast={showToast} TAG_COLORS={TAG_COLORS} />}
-          {activeTab === "settings"  && <SettingsView settings={settings} onSave={saveSettingsHandler} isPro={isPro} onUpgradeClick={requestUpgrade} customTags={customTags} defaultTags={DEFAULT_TAGS} onAddTag={addCustomTag} onRemoveTag={removeCustomTag} />}
+          {activeTab === "settings"  && <SettingsView settings={settings} onSave={saveSettingsHandler} isPro={isPro} onUpgradeClick={requestUpgrade} customTags={customTags} defaultTags={DEFAULT_TAGS} onAddTag={addCustomTag} onRemoveTag={removeCustomTag} supabase={supabase} user={user} />}
               {activeTab === "inbound"   && <InboundView leads={leads} user={user} supabase={supabase} />}
         </div>
       </div>
