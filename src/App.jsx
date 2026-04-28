@@ -3192,11 +3192,12 @@ function NoxReachApp({ user, session, supabase }) {
     } catch (err) { console.error("resetData sync failed:", err); }
   };
 const dueCount     = leads.filter(l => !l.archived && l.followUpDate && new Date(l.followUpDate) <= new Date()).length;
-  const repliedCount = leads.filter(l => !l.archived && (l.stage === "replied" || l.stage === "booked")).length;
+  const repliedCount = leads.filter(l => !l.archived && !l.is_inbound && (l.stage === "replied" || l.stage === "booked")).length;
+  const inboundCount = leads.filter(l => !l.archived && l.is_inbound && l.stage === "replied").length;
   const unreadCount  = useMemo(() => {
     try {
       const read = new Set(JSON.parse(localStorage.getItem("noxreach_read_replies") || "[]"));
-      return leads.filter(l => !l.archived && (l.stage === "replied" || l.stage === "booked") && !read.has(l.id)).length;
+      return leads.filter(l => !l.archived && !l.is_inbound && (l.stage === "replied" || l.stage === "booked") && !read.has(l.id)).length;
     } catch { return 0; }
   }, [leads]);
 const activeLeads = leads.filter(l => !l.archived);
@@ -3222,7 +3223,7 @@ const activeLeads = leads.filter(l => !l.archived);
     { id: "outreach",  label: "Outreach",   icon: "✦",  group: "ref" },
     { id: "assets",    label: "Assets",     icon: "◇",  group: "ref" },
     { id: "settings",  label: "Settings",   icon: "⚙",  group: "ref" },
-    { id: "inbound",   label: "Inbound",    icon: "⬇",  group: "ref" },
+    { id: "inbound",   label: "Inbound",    icon: "⬇",  badge: inboundCount, group: "ref" },
   ];
 
   
