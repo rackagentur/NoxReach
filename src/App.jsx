@@ -554,7 +554,7 @@ function LeadCard({ lead, onMove, onSelect, isSelected, onArchive, searchQuery, 
         <div onClick={(e) => { if (e.target === e.currentTarget || !e.target.closest('button')) { onSelect(isSelected ? null : lead); } }} style={{
 
       background: isSelected ? COLORS.purpleBg : COLORS.surface,
-      border: `1px solid ${isSelected ? COLORS.purple : isOverdue && !lead.archived ? COLORS.gold : lead.archived ? COLORS.border : stageBorder + "99"}`,
+      border: `1px solid ${isSelected ? COLORS.purple : lead.is_inbound && !lead.archived ? "#00D4FF" : isOverdue && !lead.archived ? COLORS.gold : lead.archived ? COLORS.border : stageBorder + "99"}`,
       borderRadius: 10, padding: "14px 16px", cursor: "pointer",
       transition: "all 0.15s ease", position: "relative", overflow: "hidden",
       opacity: lead.archived ? 0.45 : 1,
@@ -573,6 +573,7 @@ function LeadCard({ lead, onMove, onSelect, isSelected, onArchive, searchQuery, 
       </div>
       <div style={{ display: "flex", gap: 6, marginBottom: 8, flexWrap: "wrap" }}>
         <Badge color={TAG_COLORS[lead.tag] || COLORS.textSecondary}>{lead.tag}</Badge>
+        {lead.is_inbound && <Badge color="#00D4FF" style={{ background: "rgba(0,212,255,0.1)", border: "1px solid rgba(0,212,255,0.3)", color: "#00D4FF" }}>⬇ Inbound</Badge>}
       </div>
       {lead.notes && (
         <div style={{ fontSize: 11, color: COLORS.textSecondary, lineHeight: 1.4, marginBottom: 10 }}>
@@ -3435,7 +3436,7 @@ function PublicBookingForm({ supabase }) {
     setSubmitting(true);
     await supabase.from('leads').insert({
       user_id: djProfile.id, name: form.venue, contact: form.contact_email,
-      instagram: form.instagram, stage: 'replied', tag: form.event_type || null,
+      instagram: form.instagram, stage: 'replied', tag: form.event_type || null, is_inbound: true,
       notes: [form.message, form.date ? 'Date: ' + form.date : '', form.fee_offer ? 'Fee offer: EUR' + form.fee_offer : ''].filter(Boolean).join(' | '),
       last_contact: new Date().toISOString().split('T')[0],
     });
