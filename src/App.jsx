@@ -3178,7 +3178,6 @@ function NoxReachApp({ user, session, supabase }) {
   const [onboardingDismissed, setOnboardingDismissed] = useState(() => {
     try { return localStorage.getItem("noxreach_onboarding_done_" + user.id) === "true"; } catch { return false; }
   });
-  const handleUpgrade = () => { setIsPro(true); saveIsPro(true, user.id); setUpgradeModal(null); setShowWelcomePro(true); };
   const requestUpgrade = (reason) => setUpgradeModal(reason);
 
   const handleUpgrade = async (plan = "monthly") => {
