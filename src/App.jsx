@@ -3109,7 +3109,16 @@ function NoxReachApp({ user, session, supabase }) {
   const [gigs,  setGigs]                = useState([]);
   const [dataLoading, setDataLoading]   = useState(true);
   const [settings, setSettings]         = useState(() => loadSettings());
-  const [isPro, setIsPro]               = useState(() => loadIsPro(user.id));
+  const [isPro, setIsPro]               = useState(() => loadIsPro(user.id));React.useEffect(function() {
+    if (!user) return;
+    supabase.from("profiles").select("is_pro").eq("id", user.id).single()
+      .then(function(r) {
+        if (r.data && r.data.is_pro) {
+          setIsPro(true);
+          saveIsPro(true, user.id);
+        }
+      });
+  }, [user]);
   const [upgradeModal, setUpgradeModal] = useState(null);
   const [customTags, setCustomTags]     = useState(() => loadCustomTags());
   const [onboardingAssets, setOnboardingAssets] = useState(null);
