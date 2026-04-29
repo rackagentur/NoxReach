@@ -1834,7 +1834,7 @@ function UpgradeModal({ onClose, onUpgrade, reason }) {
 
         {/* Actions */}
         <div style={{ padding: "0 28px 28px", display: "flex", flexDirection: "column", gap: 10 }}>
-          <button onClick={onUpgrade} style={{ width: "100%", padding: "14px", background: `linear-gradient(135deg, ${COLORS.purple}, ${COLORS.purpleLight})`, border: "none", borderRadius: 12, color: "#fff", fontSize: 14, fontWeight: 800, cursor: "pointer", boxShadow: "0 6px 24px rgba(123,63,228,0.45)", letterSpacing: "0.01em" }}>
+          <button onClick={() => onUpgrade("monthly")} style={{ width: "100%", padding: "14px", background: `linear-gradient(135deg, ${COLORS.purple}, ${COLORS.purpleLight})`, border: "none", borderRadius: 12, color: "#fff", fontSize: 14, fontWeight: 800, cursor: "pointer", boxShadow: "0 6px 24px rgba(123,63,228,0.45)", letterSpacing: "0.01em" }}>
             Upgrade to Pro →
           </button>
           <button onClick={onClose} style={{ width: "100%", padding: "10px", background: "transparent", border: `1px solid ${COLORS.border}`, borderRadius: 12, color: COLORS.textMuted, fontSize: 12, cursor: "pointer" }}>
