@@ -364,14 +364,14 @@
     .feat-text { font-size: 13px; color: var(--text2); line-height: 1.7; }
 
     /* ═══════════════════════════════
-       REPLY HUB SECTION
+       BOOKING DESK SECTION
     ═══════════════════════════════════ */
 
     /* ═══════════════════════════════════
-       REPLY HUB SECTION
+       BOOKING DESK SECTION
     ═══════════════════════════════════ */
-    .replyhub-section { background: var(--bg); }
-    .replyhub-inner { display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: center; }
+    .bookingdesk-section { background: var(--bg); }
+    .bookingdesk-inner { display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: center; }
     .rh-mock { background: var(--surface); border: 1px solid var(--border2); border-radius: 14px; overflow: hidden; box-shadow: 0 24px 60px rgba(0,0,0,0.5); }
     .rh-chrome { background: var(--bg2); border-bottom: 1px solid var(--border); padding: 10px 14px; display: flex; align-items: center; gap: 6px; }
     .rh-dot { width: 9px; height: 9px; border-radius: 50%; background: var(--border2); }
@@ -412,7 +412,7 @@
     .rh-feature-icon { font-size: 20px; margin-bottom: 6px; }
     .rh-feature-title { font-size: 15px; font-weight: 700; color: var(--text); margin-bottom: 5px; }
     .rh-feature-desc { font-size: 14px; color: var(--text2); line-height: 1.65; }
-    @media (max-width: 768px) { .replyhub-inner { grid-template-columns: 1fr; } }
+    @media (max-width: 768px) { .bookingdesk-inner { grid-template-columns: 1fr; } }
 
     /* ═══════════════════════════════════
        FOLLOW-UP SECTION
@@ -610,7 +610,7 @@
   <div class="nav-links">
     <a href="#pipeline">Pipeline</a>
     <a href="#features">Features</a>
-        <a href="#reply-hub">Reply Hub</a>
+        <a href="#booking-desk">Booking Desk</a>
     <a href="#pilot" style="color:rgba(255,255,255,0.7);text-decoration:none;font-size:14px;font-weight:500;margin-right:8px">Apply</a><a href="#pricing">Pricing</a>
     <a href="https://noxreach-nox.vercel.app" class="btn-nav" target="_blank" rel="noopener noreferrer">Start Free</a>
   </div>
@@ -925,13 +925,13 @@
         style="padding:8px 20px;border-radius:8px;border:1px solid #6B2FD4;background:#0F0820;color:#8B4FFF;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;">
         Pipeline
       </button>
-      <button onclick="showTab('replyhub')" id="tab-replyhub"
+      <button onclick="showTab('bookingdesk')" id="tab-bookingdesk"
         style="padding:8px 20px;border-radius:8px;border:1px solid #1c1c2e;background:transparent;color:#9090a8;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;">
-        Reply Hub
+        Booking Desk
       </button>
-      <button onclick="showTab('assets')" id="tab-assets"
+      <button onclick="showTab('bookingkit')" id="tab-bookingkit"
         style="padding:8px 20px;border-radius:8px;border:1px solid #1c1c2e;background:transparent;color:#9090a8;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;">
-        Assets
+        Booking Kit
       </button>
       <button onclick="showTab('dashboard')" id="tab-dashboard"
         style="padding:8px 20px;border-radius:8px;border:1px solid #1c1c2e;background:transparent;color:#9090a8;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;">
@@ -946,10 +946,10 @@
 <div id="shot-dashboard" style="width:100%;display:none;">
   <img src="https://rackagentur.github.io/NoxReach/public/dashboard-screenshot.png" alt="Dashboard" style="width:100%;display:block;border-radius:0;" />
 </div>
-<div id="shot-replyhub" style="width:100%;display:none;">
+<div id="shot-bookingdesk" style="width:100%;display:none;">
   <img src="https://rackagentur.github.io/NoxReach/public/reply-hub-open.png" alt="Reply Hub" style="width:100%;display:block;border-radius:0;" />
 </div>
-<div id="shot-assets" style="width:100%;display:none;">
+<div id="shot-bookingkit" style="width:100%;display:none;">
   <img src="https://rackagentur.github.io/NoxReach/public/assets-screenshot.png" alt="Assets" style="width:100%;display:block;border-radius:0;" />
 </div>
 <div id="shot-dashboard" style="width:100%;display:none;background:#0f0f18;border-radius:0;padding:0;">
@@ -1123,7 +1123,7 @@
       </div>
       <div class="feat-card">
         <div class="feat-icon">✉</div>
-        <div class="feat-title">Reply Hub</div>
+        <div class="feat-title">Booking Desk</div>
         <div class="feat-text">Log replies, booking messages, and conversation notes against the right contact. Never lose context when a lead gets serious.</div>
       </div>
       <div class="feat-card">
@@ -1138,22 +1138,22 @@
       </div>
       <div class="feat-card">
         <div class="feat-icon">◇</div>
-        <div class="feat-title">Assets</div>
-        <div class="feat-text">Keep your EPK, mixes, links, and press materials ready to send the moment a lead warms up. Speed matters when they reply.</div>
+        <div class="feat-title">Booking Kit</div>
+        <div class="feat-text">Keep your EPK, mixes, links, and press materials in one kit — ready to send the moment a lead warms up. Speed matters when they reply.</div>
       </div>
     </div>
   </div>
 </section>
 
 <!-- ══════════════════════════════════
-     REPLY HUB SECTION
+     BOOKING DESK SECTION
     ═══════════════════════════════════ */
 
     /* ═══════════════════════════════════
-       REPLY HUB SECTION
+       BOOKING DESK SECTION
     ═══════════════════════════════════ */
-    .replyhub-section { background: var(--bg); }
-    .replyhub-inner { display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: center; }
+    .bookingdesk-section { background: var(--bg); }
+    .bookingdesk-inner { display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: center; }
     .rh-mock { background: var(--surface); border: 1px solid var(--border2); border-radius: 14px; overflow: hidden; box-shadow: 0 24px 60px rgba(0,0,0,0.5); }
     .rh-chrome { background: var(--bg2); border-bottom: 1px solid var(--border); padding: 10px 14px; display: flex; align-items: center; gap: 6px; }
     .rh-dot { width: 9px; height: 9px; border-radius: 50%; background: var(--border2); }
@@ -1194,7 +1194,7 @@
     .rh-feature-icon { font-size: 20px; margin-bottom: 6px; }
     .rh-feature-title { font-size: 15px; font-weight: 700; color: var(--text); margin-bottom: 5px; }
     .rh-feature-desc { font-size: 14px; color: var(--text2); line-height: 1.65; }
-    @media (max-width: 768px) { .replyhub-inner { grid-template-columns: 1fr; } }
+    @media (max-width: 768px) { .bookingdesk-inner { grid-template-columns: 1fr; } }
 
     /* ═══════════════════════════════════
        FOLLOW-UP SECTION
@@ -1242,10 +1242,10 @@
   </div>
 </section>
 
-<!-- REPLY HUB SECTION -->
-<section class="replyhub-section" id="reply-hub">
+<!-- BOOKING DESK SECTION -->
+<section class="bookingdesk-section" id="booking-desk">
   <div class="wrap">
-    <div class="replyhub-inner">
+    <div class="bookingdesk-inner">
       <div class="rh-mock">
         <div class="rh-chrome">
           <div class="rh-dot"></div><div class="rh-dot"></div><div class="rh-dot"></div>
@@ -1301,7 +1301,7 @@
         </div>
       </div>
       <div>
-        <div class="sec-label">Reply Hub</div>
+        <div class="sec-label">Booking Desk</div>
         <h2 class="sec-title">When they reply,<br>you're already <em>ready.</em></h2>
         <p class="sec-sub" style="margin-bottom:0">Most DJs get a reply and go cold &mdash; digging through old threads, scrambling for links. Reply Hub keeps the full conversation context in one place so you respond fast and look professional every time.</p>
         <div class="rh-features">
@@ -1327,7 +1327,7 @@
           </div>
         </div>
         <div style="margin-top:32px;">
-          <a href="https://noxreach-nox.vercel.app" class="btn-contextual" target="_blank" rel="noopener noreferrer">Open Reply Hub &mdash; it's free &rarr;</a>
+          <a href="https://noxreach-nox.vercel.app" class="btn-contextual" target="_blank" rel="noopener noreferrer">Open Booking Desk &mdash; it's free &rarr;</a>
         </div>
       </div>
     </div>
@@ -1534,9 +1534,12 @@
     <a href="https://noxreach-nox.vercel.app" target="_blank" rel="noopener noreferrer">App</a>
     <a href="#pricing">Pricing</a>
     <a href="mailto:hello@noxreach.io">Contact</a>
+    <a href="privacy.html">Privacy</a>
+    <a href="impressum.html">Impressum</a>
+    <a href="terms.html">Terms</a>
   </div>
 </footer>
-<div style="text-align:center;padding:12px 0 20px;font-size:11px;color:#444;border-top:1px solid #1a1a1a;">Your data is stored securely in the EU and never shared or sold.</div>
+<div style="text-align:center;padding:12px 0 20px;font-size:11px;color:#444;border-top:1px solid #1a1a1a;">Your data is stored securely in the EU (Frankfurt) and never shared or sold. · <a href="privacy.html" style="color:#666;text-decoration:none;">Privacy Policy</a> · <a href="impressum.html" style="color:#666;text-decoration:none;">Impressum</a> · <a href="terms.html" style="color:#666;text-decoration:none;">Terms</a></div>
 
 <script>
   const nav = document.getElementById('nav');
@@ -1548,7 +1551,7 @@
   document.querySelectorAll('.fade-up').forEach(el => obs.observe(el));
 
   function showTab(name) {
-    ['pipeline','replyhub','assets','dashboard'].forEach(function(t) {
+    ['pipeline','bookingdesk','bookingkit','dashboard'].forEach(function(t) {
       document.getElementById('shot-' + t).style.display = t === name ? 'block' : 'none';
       var btn = document.getElementById('tab-' + t);
       if (t === name) { btn.style.border='1px solid #6B2FD4'; btn.style.background='#0F0820'; btn.style.color='#8B4FFF'; }

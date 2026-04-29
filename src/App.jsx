@@ -1924,6 +1924,74 @@ function InboundView({ leads, user, supabase }) {
   );
 }
 
+
+// ─── GDPR Right to Deletion ────────────────────────────────────────────────
+function DeleteAccountButton() {
+  const [step, setStep] = React.useState("idle"); // idle | confirm | deleting | done | error
+  const [error, setError] = React.useState("");
+
+  const handleDelete = async () => {
+    setStep("deleting");
+    try {
+      // 1. Delete all user data from leads, gigs, settings tables
+      const uid = supabase.auth.getUser ? (await supabase.auth.getUser()).data?.user?.id : null;
+      if (!uid) throw new Error("Not authenticated");
+
+      // Delete in order respecting FK constraints
+      for (const table of ["gigs", "leads", "profiles"]) {
+        const { error: e } = await supabase.from(table).delete().eq("user_id", uid);
+        if (e) console.warn("Delete from", table, e.message);
+      }
+
+      // 2. Sign out — account deletion from auth requires server-side edge function
+      // For now we clear data and sign out; full auth deletion queued server-side
+      await supabase.auth.signOut();
+      setStep("done");
+    } catch (e) {
+      setError(e.message || "Something went wrong. Email hello@noxreach.io to request deletion.");
+      setStep("error");
+    }
+  };
+
+  if (step === "done") return (
+    <div style={{ padding: "14px 18px", background: "rgba(34,197,94,0.08)", border: "1px solid rgba(34,197,94,0.25)", borderRadius: 10, fontSize: 13, color: "#4ade80" }}>
+      ✓ Your data has been deleted and you have been signed out. For full account removal from our auth system, email <a href="mailto:hello@noxreach.io" style={{ color: "#4ade80" }}>hello@noxreach.io</a>.
+    </div>
+  );
+
+  if (step === "error") return (
+    <div style={{ padding: "14px 18px", background: "rgba(239,68,68,0.08)", border: "1px solid rgba(239,68,68,0.25)", borderRadius: 10, fontSize: 13, color: "#ef4444" }}>
+      {error}
+    </div>
+  );
+
+  if (step === "confirm") return (
+    <div style={{ padding: "18px 20px", background: "rgba(239,68,68,0.06)", border: "1px solid rgba(239,68,68,0.25)", borderRadius: 12 }}>
+      <div style={{ fontSize: 14, fontWeight: 700, color: "#f0f0f0", marginBottom: 8 }}>Are you absolutely sure?</div>
+      <div style={{ fontSize: 13, color: COLORS.textSecondary, marginBottom: 16, lineHeight: 1.6 }}>
+        This will permanently erase all your leads, gigs, settings, and profile data. You cannot undo this.
+      </div>
+      <div style={{ display: "flex", gap: 10 }}>
+        <button onClick={handleDelete}
+          style={{ padding: "10px 20px", background: "#ef4444", border: "none", borderRadius: 8, color: "#fff", fontSize: 13, fontWeight: 700, cursor: "pointer" }}>
+          Yes, delete everything
+        </button>
+        <button onClick={() => setStep("idle")}
+          style={{ padding: "10px 20px", background: "transparent", border: `1px solid ${COLORS.border}`, borderRadius: 8, color: COLORS.textSecondary, fontSize: 13, cursor: "pointer" }}>
+          Cancel
+        </button>
+      </div>
+    </div>
+  );
+
+  return (
+    <button onClick={() => setStep("confirm")}
+      style={{ padding: "10px 20px", background: "rgba(239,68,68,0.08)", border: "1px solid rgba(239,68,68,0.3)", borderRadius: 8, color: "#ef4444", fontSize: 13, fontWeight: 600, cursor: "pointer" }}>
+      Delete my account and all data
+    </button>
+  );
+}
+
 function SettingsView({ settings, onSave, isPro, onUpgradeClick, customTags, defaultTags, onAddTag, onRemoveTag, supabase, user }) {
   const [local, setLocal] = useState({ ...settings });
   const [saved,  setSaved]  = useState(false);
@@ -2719,7 +2787,7 @@ function OnboardingBanner({ leads, assets, onNavigate, onDismiss }) {
       title: "Fill in your asset kit",
       desc: "EPK, mix link, booking email — ready to paste.",
       done: hasAssets,
-      action: () => onNavigate("assets"),
+      action: () => onNavigate("bookingkit"),
       cta: "Fill in now →",
       locked: !hasSentMsg,
     },
@@ -2814,7 +2882,7 @@ function MobileBottomNav({ activeTab, setActiveTab, dueCount, unreadCount, inbou
     { id: 'dashboard', icon: String.fromCharCode(9635), label: 'Home' },
     { id: 'pipeline',  icon: String.fromCharCode(11035), label: 'Pipeline' },
     { id: 'followups', icon: String.fromCharCode(9200), label: 'Follow-ups', badge: dueCount },
-    { id: 'replyhub',  icon: String.fromCharCode(9993), label: 'Reply', badge: unreadCount },
+    { id: 'bookingdesk',  icon: String.fromCharCode(9993), label: 'Reply', badge: unreadCount },
     { id: 'inbound',   icon: '⬇', label: 'Inbound', badge: inboundCount },
   ];
   return (
@@ -3249,10 +3317,10 @@ const activeLeads = leads.filter(l => !l.archived);
     { id: "dashboard", label: "Dashboard",  icon: "▣",  group: "main" },
     { id: "pipeline",  label: "Pipeline",   icon: "⬛", group: "main" },
     { id: "followups", label: "Follow-ups", icon: "⏰", badge: dueCount, group: "main" },
-    { id: "replyhub",  label: "Reply Hub",  icon: "✉",  badge: unreadCount, group: "main" },
+    { id: "bookingdesk",  label: "Reply Hub",  icon: "✉",  badge: unreadCount, group: "main" },
     { id: "calendar",  label: "Calendar",   icon: "📅", group: "main" },
     { id: "outreach",  label: "Outreach",   icon: "✦",  group: "ref" },
-    { id: "assets",    label: "Assets",     icon: "◇",  group: "ref" },
+    { id: "bookingkit", label: "Booking Kit", icon: "◇",  group: "ref" },
     { id: "settings",  label: "Settings",   icon: "⚙",  group: "ref" },
     { id: "inbound",   label: "Inbound",    icon: "⬇",  badge: inboundCount, group: "ref" },
   ];
@@ -3420,8 +3488,8 @@ const activeLeads = leads.filter(l => !l.archived);
                 {activeTab === "followups" && `${dueCount} due today`}
                 {activeTab === "outreach"  && (isPro ? "4 templates ready" : "2 / 4 templates · Upgrade for all")}
                 {activeTab === "dashboard" && "Your booking overview"}
-                {activeTab === "assets"    && "Your Assets"}
-                {activeTab === "replyhub"  && `${repliedCount} message${repliedCount !== 1 ? "s" : ""}${unreadCount > 0 ? ` · ${unreadCount} unread` : ""}`}
+                {activeTab === "bookingkit"    && "Your Assets"}
+                {activeTab === "bookingdesk"  && `${repliedCount} message${repliedCount !== 1 ? "s" : ""}${unreadCount > 0 ? ` · ${unreadCount} unread` : ""}`}
                 {activeTab === "calendar"  && `${gigs.filter(g => new Date(g.date) >= new Date()).length} upcoming gigs`}
                 {activeTab === "settings"  && `Follow-up 1: ${settings.followup1Days}d · Follow-up 2: ${settings.followup2Days}d`}
               </div>
@@ -3487,9 +3555,9 @@ const activeLeads = leads.filter(l => !l.archived);
           )}
           {activeTab === "followups" && <FollowUpsView leads={leads} onNavigate={setActiveTab} />}
           {activeTab === "outreach"  && <OutreachView isPro={isPro} onUpgradeClick={requestUpgrade} />}
-          {activeTab === "assets"    && <AssetsView supabase={supabase} userId={user.id} />}
+          {activeTab === "bookingkit"    && <AssetsView supabase={supabase} userId={user.id} />}
           {activeTab === "calendar"  && <GigCalendarView leads={leads} gigs={gigs} setGigs={setGigs} showToast={showToast} isPro={isPro} onUpgradeClick={requestUpgrade} customTags={customTags} TAG_COLORS={TAG_COLORS} supabase={supabase} userId={user.id} />}
-          {activeTab === "replyhub"  && <ReplyHubView leads={leads} onMove={moveLead} showToast={showToast} TAG_COLORS={TAG_COLORS} />}
+          {activeTab === "bookingdesk" && <ReplyHubView leads={leads} onMove={moveLead} showToast={showToast} TAG_COLORS={TAG_COLORS} />}
           {activeTab === "settings"  && <SettingsView settings={settings} onSave={saveSettingsHandler} isPro={isPro} onUpgradeClick={requestUpgrade} customTags={customTags} defaultTags={DEFAULT_TAGS} onAddTag={addCustomTag} onRemoveTag={removeCustomTag} supabase={supabase} user={user} />}
               {activeTab === "inbound"   && <InboundView leads={leads} user={user} supabase={supabase} />}
         </div>

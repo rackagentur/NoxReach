@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <link rel="icon" type="image/png" href="public/nr-icon.png" />
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Privacy Policy — NoxReach</title>
+  <meta name="robots" content="noindex" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #060608; --surface: #0f0f18; --border: #1c1c2e;
+      --purple: #6B2FD4; --purple-l: #8B4FFF; --cyan: #00D4FF;
+      --text: #f0f0f0; --text2: #9090a8; --text3: #50506a;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { background: var(--bg); color: var(--text); font-family: 'DM Sans', sans-serif; font-size: 16px; line-height: 1.7; }
+    nav { padding: 20px 32px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
+    .nav-logo { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+    .wrap { max-width: 760px; margin: 0 auto; padding: 60px 32px 100px; }
+    h1 { font-family: 'Bebas Neue', sans-serif; font-size: clamp(40px, 6vw, 64px); letter-spacing: 0.02em; margin-bottom: 8px; }
+    .meta { font-size: 13px; color: var(--text3); margin-bottom: 48px; font-family: 'DM Mono', monospace; }
+    h2 { font-size: 18px; font-weight: 700; margin: 40px 0 12px; color: var(--text); }
+    h3 { font-size: 15px; font-weight: 700; margin: 24px 0 8px; color: var(--text); }
+    p { color: var(--text2); margin-bottom: 14px; }
+    ul { color: var(--text2); padding-left: 20px; margin-bottom: 14px; }
+    li { margin-bottom: 6px; }
+    a { color: var(--purple-l); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    .highlight-box { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 24px 28px; margin: 24px 0; }
+    .highlight-box p { margin: 0; }
+    footer { padding: 32px; border-top: 1px solid var(--border); display: flex; gap: 24px; justify-content: center; flex-wrap: wrap; }
+    footer a { font-size: 13px; color: var(--text3); text-decoration: none; }
+    footer a:hover { color: var(--text2); }
+  </style>
+</head>
+<body>
+
+<nav>
+  <a href="index.html" class="nav-logo">
+    <img src="public/nr-icon.png" alt="NR" style="width:36px;height:36px;border-radius:10px;" />
+    <img src="public/nr-wordmark.png" alt="NoxReach" style="height:18px;width:auto;" />
+  </a>
+  <a href="index.html" style="font-size:13px;color:var(--text3);text-decoration:none;">← Back to NoxReach</a>
+</nav>
+
+<div class="wrap">
+  <h1>Privacy Policy</h1>
+  <div class="meta">Last updated: 29 April 2026 · Version 1.0</div>
+
+  <div class="highlight-box">
+    <p><strong style="color:var(--text)">Short version:</strong> We collect only what we need to run your account. Your data is stored in the EU (Frankfurt). We never sell it. You can delete everything at any time.</p>
+  </div>
+
+  <h2>1. Who We Are</h2>
+  <p>NoxReach is operated by Gregorgus (GEEZ), a sole trader based in Cologne, Germany. Contact: <a href="mailto:hello@noxreach.io">hello@noxreach.io</a></p>
+  <p>For purposes of EU data protection law, Gregorgus is the data controller for all personal data processed through NoxReach.</p>
+
+  <h2>2. What Data We Collect</h2>
+  <h3>Account data</h3>
+  <ul>
+    <li>Email address (required to create an account)</li>
+    <li>Display name / username (optional, set by you)</li>
+    <li>Password hash (stored by Supabase Auth; we never see your raw password)</li>
+  </ul>
+  <h3>Usage data you create</h3>
+  <ul>
+    <li>Leads: names, venues, contact details, notes, stages, follow-up dates you enter</li>
+    <li>Gigs: confirmed bookings, dates, fees you enter</li>
+    <li>Settings: templates, tags, preferences you configure</li>
+    <li>Assets: links and materials you store in your Booking Kit</li>
+  </ul>
+  <h3>Technical data</h3>
+  <ul>
+    <li>IP address and browser user-agent (collected by Supabase and Vercel for security and abuse prevention)</li>
+    <li>Timestamps of logins and data changes</li>
+  </ul>
+  <p>We do <strong>not</strong> use advertising trackers, third-party analytics (Google Analytics, Meta Pixel, etc.), or any behavioural profiling.</p>
+
+  <h2>3. Why We Process Your Data</h2>
+  <p>Legal basis: <strong>contract performance</strong> (Art. 6(1)(b) GDPR) — we need your data to provide the NoxReach service you signed up for.</p>
+  <ul>
+    <li>Account management and authentication</li>
+    <li>Storing and displaying your booking pipeline and leads</li>
+    <li>Sending the weekly booking digest email (Pro users, opt-out available in Settings)</li>
+    <li>Sending booking form notifications from your public booking link</li>
+  </ul>
+
+  <h2>4. Where Your Data Is Stored</h2>
+  <p>All data is stored on <strong>Supabase</strong> hosted in <strong>AWS eu-central-1 (Frankfurt, Germany)</strong> — within the European Economic Area. No data leaves the EEA for processing.</p>
+  <p>The NoxReach app is hosted on <strong>Vercel</strong>. Vercel may log request metadata (IP, browser) via its edge network. See <a href="https://vercel.com/legal/privacy-policy" target="_blank" rel="noopener noreferrer">Vercel's Privacy Policy</a>.</p>
+
+  <h2>5. Your Rights Under GDPR</h2>
+  <p>You have the following rights regarding your personal data:</p>
+  <ul>
+    <li><strong>Right of access</strong> (Art. 15) — request a copy of all data we hold about you</li>
+    <li><strong>Right to rectification</strong> (Art. 16) — correct inaccurate data (most data is editable directly in the app)</li>
+    <li><strong>Right to erasure</strong> (Art. 17) — delete your account and all associated data. You can do this directly in <strong>Settings → Danger Zone → Delete my account</strong>, or by emailing us</li>
+    <li><strong>Right to restrict processing</strong> (Art. 18) — request we stop processing your data while a dispute is resolved</li>
+    <li><strong>Right to data portability</strong> (Art. 20) — receive your data in a machine-readable format (email us)</li>
+    <li><strong>Right to object</strong> (Art. 21) — object to processing based on legitimate interests</li>
+  </ul>
+  <p>To exercise any of these rights, email <a href="mailto:hello@noxreach.io">hello@noxreach.io</a>. We will respond within 30 days. You also have the right to lodge a complaint with the German data protection authority (<a href="https://www.ldi.nrw.de" target="_blank" rel="noopener noreferrer">LDI NRW</a>) or the supervisory authority in your country of residence.</p>
+
+  <h2>6. Data Retention</h2>
+  <p>We retain your data for as long as your account is active. If you delete your account, all lead, gig, and profile data is permanently erased within 30 days. Authentication records are deleted from Supabase Auth within 90 days per Supabase's deletion schedule.</p>
+  <p>Backups may retain data for up to 30 additional days after deletion.</p>
+
+  <h2>7. Third-Party Services</h2>
+  <ul>
+    <li><strong>Supabase</strong> — database, auth, edge functions. <a href="https://supabase.com/privacy" target="_blank" rel="noopener noreferrer">Privacy Policy</a></li>
+    <li><strong>Vercel</strong> — app hosting and CDN. <a href="https://vercel.com/legal/privacy-policy" target="_blank" rel="noopener noreferrer">Privacy Policy</a></li>
+    <li><strong>Stripe</strong> (Pro users only) — payment processing. NoxReach never stores card numbers; Stripe handles all payment data. <a href="https://stripe.com/privacy" target="_blank" rel="noopener noreferrer">Privacy Policy</a></li>
+  </ul>
+  <p>No other third-party services receive your data.</p>
+
+  <h2>8. Cookies</h2>
+  <p>NoxReach uses only functional cookies necessary to keep you logged in (Supabase Auth session token). We do not use advertising, analytics, or tracking cookies. No cookie consent banner is required for strictly necessary cookies under GDPR.</p>
+
+  <h2>9. Children</h2>
+  <p>NoxReach is intended for users aged 18 and over. We do not knowingly collect data from minors. If you believe a minor has created an account, contact us and we will delete it.</p>
+
+  <h2>10. Changes to This Policy</h2>
+  <p>We will notify active users by email if we make material changes to this policy. The "Last updated" date at the top of this page always reflects the current version.</p>
+
+  <h2>11. Contact</h2>
+  <p>Data controller: Gregorgus (GEEZ)<br>
+  Email: <a href="mailto:hello@noxreach.io">hello@noxreach.io</a><br>
+  Address: Cologne, Germany (full address in <a href="impressum.html">Impressum</a>)</p>
+</div>
+
+<footer>
+  <a href="index.html">← Back to NoxReach</a>
+  <a href="impressum.html">Impressum</a>
+  <a href="terms.html">Terms of Service</a>
+  <a href="mailto:hello@noxreach.io">Contact</a>
+</footer>
+
+</body>
+</html>
