@@ -736,13 +736,7 @@ function PipelineView({ leads, onMove, onSelect, selectedLead, onArchive, search
 
 function AssetCopyRow({ label, value }) {
   const [copied, setCopied] = useState(false);
-  const [artistName, setArtistName] = useState("GEEZ");
 
-  useEffect(() => {
-    if (!supabase || !userId) return;
-    supabase.from("user_assets").select("artist_name").eq("user_id", userId).maybeSingle()
-      .then(({ data }) => { if (data?.artist_name) setArtistName(data.artist_name); });
-  }, [userId]);
   const copy = () => {
     navigator.clipboard.writeText(value);
     setCopied(true);
@@ -1553,16 +1547,18 @@ function FollowUpsView({ leads, onNavigate }) {
 
 function OutreachView({ isPro, onUpgradeClick, supabase, userId }) {
   const [selected, setSelected] = useState("berlin");
-  const TEMPLATES = getTemplates(artistName);
-  const template = TEMPLATES.find(t => t.id === selected);
-  const [copied, setCopied] = useState(false);
   const [artistName, setArtistName] = useState("GEEZ");
+  const [copied, setCopied] = useState(false);
 
   useEffect(() => {
     if (!supabase || !userId) return;
     supabase.from("user_assets").select("artist_name").eq("user_id", userId).maybeSingle()
       .then(({ data }) => { if (data?.artist_name) setArtistName(data.artist_name); });
   }, [userId]);
+
+  const TEMPLATES = getTemplates(artistName);
+  const template = TEMPLATES.find(t => t.id === selected);
+
   const copy = () => { navigator.clipboard.writeText(template.text); setCopied(true); setTimeout(() => setCopied(false), 1800); };
   const freeTemplateIds = ["berlin", "circuit"];
 
@@ -1623,13 +1619,7 @@ function AssetLink({ icon, label, sublabel, href, accent, actionLabel = "Open" }
 
 function CopyBlock({ label, value }) {
   const [copied, setCopied] = useState(false);
-  const [artistName, setArtistName] = useState("GEEZ");
 
-  useEffect(() => {
-    if (!supabase || !userId) return;
-    supabase.from("user_assets").select("artist_name").eq("user_id", userId).maybeSingle()
-      .then(({ data }) => { if (data?.artist_name) setArtistName(data.artist_name); });
-  }, [userId]);
   const copy = () => { navigator.clipboard.writeText(value); setCopied(true); setTimeout(() => setCopied(false), 1800); };
   return (
     <div style={{ background: COLORS.bg, border: `1px solid ${COLORS.border}`, borderRadius: 10, padding: "12px 14px", display: "flex", justifyContent: "space-between", alignItems: "center", gap: 12 }}>
@@ -1891,13 +1881,7 @@ function InboundView({ leads, user, supabase }) {
   const inbound = leads.filter(l => !l.archived && l.stage === "replied" && l.contact && l.contact.includes("@"));
   const [username, setUsername] = useState(null);
   const [copied, setCopied] = useState(false);
-  const [artistName, setArtistName] = useState("GEEZ");
 
-  useEffect(() => {
-    if (!supabase || !userId) return;
-    supabase.from("user_assets").select("artist_name").eq("user_id", userId).maybeSingle()
-      .then(({ data }) => { if (data?.artist_name) setArtistName(data.artist_name); });
-  }, [userId]);
 
   useEffect(() => {
     if (!user?.id) return;
@@ -3227,8 +3211,8 @@ function OutreachMethodModal({ lead, onClose, onSelect, templates }) {
 
   const buildMailto = () => {
     const template = templates.find(t => t.id === "berlin");
-    const body = template ? template.text : `Hey,\n\nI wanted to reach out about a potential booking.\n\n— ${artistName}`;
-    const subject = encodeURIComponent(`Booking Inquiry — ${artistName}`);
+    const body = template ? template.text : "Hey,\n\nI wanted to reach out about a potential booking.";
+    const subject = encodeURIComponent("Booking Inquiry");
     const encodedBody = encodeURIComponent(body.replace("[Name]", lead.name));
     const email = lead.contact || "";
     return "mailto:" + email + "?subject=" + subject + "&body=" + encodedBody;
