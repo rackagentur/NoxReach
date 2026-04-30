@@ -2370,6 +2370,12 @@ function SettingsView({ settings, onSave, isPro, onUpgradeClick, customTags, def
           {!isDirty && !saved && <span style={{ fontSize: 11, color: COLORS.textMuted }}>No unsaved changes</span>}
           {saved && <span style={{ fontSize: 11, color: COLORS.green }}>Changes applied to all future reminders</span>}
         </div>
+
+        {/* Danger Zone */}
+        <div style={{ marginTop: 48, paddingTop: 24, borderTop: `1px solid ${COLORS.border}` }}>
+          <div style={{ fontSize: 10, fontWeight: 700, color: COLORS.textMuted, letterSpacing: "0.1em", textTransform: "uppercase", marginBottom: 16 }}>Danger Zone</div>
+          <DeleteAccountButton />
+        </div>
       </div>
     </div>
   );
