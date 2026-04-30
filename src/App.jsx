@@ -3381,18 +3381,24 @@ function NoxReachApp({ user, session, supabase }) {
 
   useEffect(function() {
     if (!user) return;
+    // Check if returning from Stripe checkout
+    const params = new URLSearchParams(window.location.search);
+    if (params.get("upgraded") === "true") {
+      window.history.replaceState({}, "", window.location.pathname);
+    }
     supabase.from("profiles").select("is_pro, pro_expires_at").eq("id", user.id).single()
       .then(function(r) {
         const data = r["data"];
         if (!data) return;
         const trialActive = data.pro_expires_at && new Date(data.pro_expires_at) > new Date();
         const isPaid = data.is_pro;
+        const returningFromStripe = new URLSearchParams(window.location.search).get("upgraded") === "true";
         if (isPaid || trialActive) {
           setIsPro(true);
           saveIsPro(true, user.id);
           const proKey = "nr_pro_welcomed_" + user.id;
           try {
-            if (!localStorage.getItem(proKey)) {
+            if (!localStorage.getItem(proKey) || returningFromStripe) {
               localStorage.setItem(proKey, "1");
               setShowWelcomePro(true);
             }
