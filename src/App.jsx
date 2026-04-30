@@ -2840,6 +2840,103 @@ function ReplyHubView({ leads, onMove, showToast, TAG_COLORS }) {
 }
 
 
+
+// ─── Pricing View ─────────────────────────────────────────────────────────────
+
+function PricingView({ isPro, onUpgrade }) {
+  const free = [
+    "Up to 25 leads",
+    "Full pipeline (5 stages)",
+    "Follow-up reminders",
+    "2 outreach templates",
+    "Booking Kit (EPK, mix, bio)",
+    "Weekly digest email",
+  ];
+  const pro = [
+    "Unlimited leads & gigs",
+    "All outreach templates",
+    "Auto follow-up scheduling (5 & 14 days)",
+    "Custom follow-up intervals",
+    "Conversion Funnel + drop-off insights",
+    "Booking Desk — full conversation context",
+    "Priority support",
+  ];
+
+  return (
+    <div style={{ maxWidth: 640, margin: "0 auto", padding: "8px 0 40px" }}>
+      <div style={{ marginBottom: 32 }}>
+        <div style={{ fontSize: 22, fontWeight: 800, color: COLORS.text, marginBottom: 6 }}>Plans</div>
+        <div style={{ fontSize: 13, color: COLORS.textSecondary }}>Simple pricing. No contracts. Cancel anytime.</div>
+      </div>
+
+      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
+        {/* Free */}
+        <div style={{ background: COLORS.surface, border: `1px solid ${COLORS.border}`, borderRadius: 16, padding: 24 }}>
+          <div style={{ fontSize: 11, fontWeight: 700, color: COLORS.textMuted, letterSpacing: "0.1em", textTransform: "uppercase", marginBottom: 12 }}>Free</div>
+          <div style={{ display: "flex", alignItems: "baseline", gap: 4, marginBottom: 20 }}>
+            <span style={{ fontSize: 32, fontWeight: 800, color: COLORS.text, fontFamily: "'DM Mono', monospace" }}>€0</span>
+            <span style={{ fontSize: 13, color: COLORS.textSecondary }}>/month</span>
+          </div>
+          <div style={{ display: "flex", flexDirection: "column", gap: 10, marginBottom: 24 }}>
+            {free.map((f, i) => (
+              <div key={i} style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                <div style={{ width: 16, height: 16, borderRadius: "50%", background: COLORS.border, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+                  <span style={{ fontSize: 8, color: COLORS.textSecondary, fontWeight: 800 }}>✓</span>
+                </div>
+                <span style={{ fontSize: 12, color: COLORS.textSecondary }}>{f}</span>
+              </div>
+            ))}
+          </div>
+          <div style={{ width: "100%", padding: "11px", background: "transparent", border: `1px solid ${COLORS.border}`, borderRadius: 10, color: COLORS.textMuted, fontSize: 12, fontWeight: 700, textAlign: "center" }}>
+            {isPro ? "Previous plan" : "Current plan"}
+          </div>
+        </div>
+
+        {/* Pro */}
+        <div style={{ background: COLORS.purpleBg, border: `1px solid ${COLORS.purpleDim}`, borderRadius: 16, padding: 24, position: "relative", boxShadow: "0 0 40px rgba(123,63,228,0.12)" }}>
+          {!isPro && (
+            <div style={{ position: "absolute", top: -10, right: 16, background: `linear-gradient(135deg, ${COLORS.purple}, ${COLORS.purpleLight})`, borderRadius: 20, padding: "3px 10px", fontSize: 10, fontWeight: 800, color: "#fff", letterSpacing: "0.05em" }}>RECOMMENDED</div>
+          )}
+          <div style={{ fontSize: 11, fontWeight: 700, color: COLORS.purpleLight, letterSpacing: "0.1em", textTransform: "uppercase", marginBottom: 12 }}>Pro</div>
+          <div style={{ display: "flex", alignItems: "baseline", gap: 4, marginBottom: 4 }}>
+            <span style={{ fontSize: 32, fontWeight: 800, color: COLORS.text, fontFamily: "'DM Mono', monospace" }}>€19</span>
+            <span style={{ fontSize: 13, color: COLORS.textSecondary }}>/month</span>
+          </div>
+          <div style={{ fontSize: 11, color: COLORS.green, marginBottom: 20 }}>or €152/year — save 20%</div>
+          <div style={{ display: "flex", flexDirection: "column", gap: 10, marginBottom: 24 }}>
+            {pro.map((f, i) => (
+              <div key={i} style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                <div style={{ width: 16, height: 16, borderRadius: "50%", background: COLORS.green + "22", border: `1px solid ${COLORS.green}44`, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+                  <span style={{ fontSize: 8, color: COLORS.green, fontWeight: 800 }}>✓</span>
+                </div>
+                <span style={{ fontSize: 12, color: COLORS.textSecondary }}>{f}</span>
+              </div>
+            ))}
+          </div>
+          {isPro ? (
+            <div style={{ width: "100%", padding: "11px", background: COLORS.green + "22", border: `1px solid ${COLORS.green}44`, borderRadius: 10, color: COLORS.green, fontSize: 12, fontWeight: 800, textAlign: "center" }}>
+              ✓ Your current plan
+            </div>
+          ) : (
+            <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+              <button onClick={() => onUpgrade("monthly")} style={{ width: "100%", padding: "12px", background: `linear-gradient(135deg, ${COLORS.purple}, ${COLORS.purpleLight})`, border: "none", borderRadius: 10, color: "#fff", fontSize: 13, fontWeight: 800, cursor: "pointer", boxShadow: "0 4px 20px rgba(123,63,228,0.4)" }}>
+                Upgrade to Pro — €19/mo →
+              </button>
+              <button onClick={() => onUpgrade("yearly")} style={{ width: "100%", padding: "10px", background: "transparent", border: `1px solid ${COLORS.purpleDim}`, borderRadius: 10, color: COLORS.purpleLight, fontSize: 12, fontWeight: 700, cursor: "pointer" }}>
+                Annual — €152/year (save 20%)
+              </button>
+            </div>
+          )}
+        </div>
+      </div>
+
+      <div style={{ marginTop: 24, textAlign: "center", fontSize: 11, color: COLORS.textMuted }}>
+        Cancel anytime · Stripe-secured · EU VAT handled automatically
+      </div>
+    </div>
+  );
+}
+
 // ─── Onboarding Banner ────────────────────────────────────────────────────────
 
 function OnboardingBanner({ leads, assets, onNavigate, onDismiss }) {
@@ -3454,6 +3551,7 @@ const activeLeads = leads.filter(l => !l.archived);
     { id: "bookingkit", label: "Booking Kit", icon: "◇",  group: "ref" },
     { id: "settings",  label: "Settings",   icon: "⚙",  group: "ref" },
     { id: "inbound",   label: "Inbound",    icon: "⬇",  badge: inboundCount, group: "ref" },
+    { id: "pricing",   label: "Pricing",    icon: "◈",  group: "ref" },
   ];
 
   
@@ -3688,6 +3786,7 @@ const activeLeads = leads.filter(l => !l.archived);
           )}
           {activeTab === "followups" && <FollowUpsView leads={leads} onNavigate={setActiveTab} />}
           {activeTab === "outreach"  && <OutreachView isPro={isPro} onUpgradeClick={requestUpgrade} />}
+          {activeTab === "pricing"     && <PricingView isPro={isPro} onUpgrade={handleUpgrade} />}
           {activeTab === "bookingkit"    && <AssetsView supabase={supabase} userId={user.id} />}
           {activeTab === "calendar"  && <GigCalendarView leads={leads} gigs={gigs} setGigs={setGigs} showToast={showToast} isPro={isPro} onUpgradeClick={requestUpgrade} customTags={customTags} TAG_COLORS={TAG_COLORS} supabase={supabase} userId={user.id} />}
           {activeTab === "bookingdesk" && <ReplyHubView leads={leads} onMove={moveLead} showToast={showToast} TAG_COLORS={TAG_COLORS} />}
