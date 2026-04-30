@@ -3670,7 +3670,6 @@ const activeLeads = leads.filter(l => !l.archived);
       )}
             {showWelcomeNew && !isPro && <WelcomeNewUserModal onClose={dismissWelcomeNew} />}
       {showWelcomePro && <ProWelcomeModal onClose={() => setShowWelcomePro(false)} />}
-      <CookieBanner />
       {upgradeModal     && <UpgradeModal reason={upgradeModal} onClose={() => setUpgradeModal(null)} onUpgrade={handleUpgrade} />}
       {reviewNudge && <ReviewNudgeModal lead={reviewNudge} onClose={() => setReviewNudge(null)} reviewEmail="info@soundofgeez.com" />
 }
@@ -3967,10 +3966,13 @@ function PublicBookingForm({ supabase }) {
 export default function NoxReach() {
   if (window.location.pathname.startsWith('/book/')) return <PublicBookingForm supabase={supabase} />;
   return (
-    <AuthGate>
-      {({ user, session, supabase }) => (
-        <NoxReachApp user={user} session={session} supabase={supabase} />
-      )}
-    </AuthGate>
+    <>
+      <AuthGate>
+        {({ user, session, supabase }) => (
+          <NoxReachApp user={user} session={session} supabase={supabase} />
+        )}
+      </AuthGate>
+      <CookieBanner />
+    </>
   );
 }
