@@ -3473,9 +3473,10 @@ function NoxReachApp({ user, session, supabase }) {
   const handleUpgrade = async (plan = "monthly") => {
     try {
       showToast("Opening checkout...", "info");
+      const stripeTab = window.open("", "_blank");
       const session = await supabase.auth.getSession();
       const token = session.data.session?.access_token;
-      if (!token) { showToast("Please sign in first", "error"); return; }
+      if (!token) { showToast("Please sign in first", "error"); if (stripeTab) stripeTab.close(); return; }
       const res = await fetch(
         `${supabase.supabaseUrl}/functions/v1/create-checkout-session`,
         {
@@ -3485,7 +3486,7 @@ function NoxReachApp({ user, session, supabase }) {
         }
       );
       const data = await res.json();
-      if (data.url) { window.open(data.url, "_blank"); }
+      if (data.url) { if (stripeTab) { stripeTab.location.href = data.url; } else { window.location.href = data.url; } }
       else { showToast(data.error || "Checkout failed", "error"); }
     } catch (e) { showToast("Checkout error: " + e.message, "error"); }
   };
