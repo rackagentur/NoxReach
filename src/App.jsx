@@ -3749,6 +3749,7 @@ const activeLeads = leads.filter(l => !l.archived);
               <div style={{ fontSize: 9, fontWeight: 800, padding: "2px 8px", borderRadius: 4, background: COLORS.gold + "22", color: COLORS.gold, border: `1px solid ${COLORS.gold}44`, letterSpacing: "0.1em" }}>PRO</div>
               <span style={{ fontSize: 10, color: COLORS.textMuted }}>All features unlocked</span>
               {user?.email === "info@soundofgeez.com" && <button onClick={() => { setIsPro(false); saveIsPro(false, user.id); showToast("Switched to Free (demo)", "info"); }} style={{ marginLeft: "auto", fontSize: 9, color: COLORS.textMuted, background: "none", border: "none", cursor: "pointer", padding: 0 }}>demo</button>}
+              <a href="https://instagram.com/noxreach.os" target="_blank" rel="noopener noreferrer" style={{ fontSize: 10, color: COLORS.textMuted, textDecoration: "none", marginTop: 4, display: "block" }}>@noxreach.os</a>
             </div>
           )}
 
