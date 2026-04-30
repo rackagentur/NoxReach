@@ -242,6 +242,11 @@ WebkitTextFillColor: C.text,
         <div style={{ textAlign: "center", marginTop: 20, fontSize: 12, color: C.text3 }}>
           Built for DJs who book with intent.
         </div>
+        <div style={{ textAlign: "center", marginTop: 12, fontSize: 11, color: "rgba(255,255,255,0.2)", display: "flex", gap: 16, justifyContent: "center" }}>
+          <a href="#privacy" style={{ color: "rgba(255,255,255,0.25)", textDecoration: "none" }}>Privacy Policy</a>
+          <a href="#impressum" style={{ color: "rgba(255,255,255,0.25)", textDecoration: "none" }}>Impressum</a>
+          <a href="#terms" style={{ color: "rgba(255,255,255,0.25)", textDecoration: "none" }}>Terms</a>
+        </div>
       </div>
     </div>
   );
