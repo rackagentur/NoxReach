@@ -1553,6 +1553,7 @@ function FollowUpsView({ leads, onNavigate }) {
 
 function OutreachView({ isPro, onUpgradeClick, supabase, userId }) {
   const [selected, setSelected] = useState("berlin");
+  const TEMPLATES = getTemplates(artistName);
   const template = TEMPLATES.find(t => t.id === selected);
   const [copied, setCopied] = useState(false);
   const [artistName, setArtistName] = useState("GEEZ");
