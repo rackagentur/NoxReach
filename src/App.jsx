@@ -2401,10 +2401,15 @@ function dbToLead(r) {
     tag:           r.tag || "Tech-House",
     stage:         r.stage || "target",
     notes:         r.notes || "",
-    followUpDate:  r.follow_up_date || null,
-    lastContact:   r.last_contact || null,
-    archived:      r.archived || false,
-    bookingStatus: r.booking_status || [],
+    followUpDate:   r.follow_up_date || null,
+    lastContact:    r.last_contact || null,
+    archived:       r.archived || false,
+    bookingStatus:  r.booking_status || [],
+    outreachMethod: r.outreach_method || null,
+    contactLog:     r.contact_log || "",
+    fee:            r.fee || null,
+    depositPaid:    r.deposit_paid || false,
+    isInbound:      r.is_inbound || false,
   };
 }
 function leadToDb(lead, userId) {
