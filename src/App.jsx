@@ -1987,8 +1987,8 @@ function CookieBanner() {
 
 // ─── GDPR Right to Deletion ────────────────────────────────────────────────
 function DeleteAccountButton() {
-  const [step, setStep] = React.useState("idle"); // idle | confirm | deleting | done | error
-  const [error, setError] = React.useState("");
+  const [step, setStep] = useState("idle"); // idle | confirm | deleting | done | error
+  const [error, setError] = useState("");
 
   const handleDelete = async () => {
     setStep("deleting");
