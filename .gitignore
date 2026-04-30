@@ -4,3 +4,4 @@ dist/
 **/.DS_Store
 Marketing/*.md
 Marketing/*.rtf
+supabase/.temp/
