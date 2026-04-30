@@ -3485,7 +3485,7 @@ function NoxReachApp({ user, session, supabase }) {
         }
       );
       const data = await res.json();
-      if (data.url) { window.location.href = data.url; }
+      if (data.url) { window.open(data.url, "_blank"); }
       else { showToast(data.error || "Checkout failed", "error"); }
     } catch (e) { showToast("Checkout error: " + e.message, "error"); }
   };
