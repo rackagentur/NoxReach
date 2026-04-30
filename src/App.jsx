@@ -3,7 +3,7 @@ import { createClient } from "@supabase/supabase-js";
 
 // ── Supabase client ──────────────────────────────────────────────────────────
 const SUPABASE_URL  = "https://ckttttvgvpvflgjzkbmy.supabase.co";
-const SUPABASE_ANON = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNrdHR0dHZndnB2ZmxnanprYm15Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY4ODc4MzcsImV4cCI6MjA5MjQ2MzgzN30.25WvWNkI3ULQZuelqfv_V6YlsBFT74AjPhVua6tB4KU";
+const SUPABASE_ANON = "sb_publishable_77AjzPzfXgMSvku0fRFD9w_l4hHVMvo";
 const supabase = createClient(SUPABASE_URL, SUPABASE_ANON);
 
 
@@ -3905,7 +3905,7 @@ function PublicBookingForm({ supabase }) {
     try {
       await fetch('https://ckttttvgvpvflgjzkbmy.supabase.co/functions/v1/booking-notify', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNrdHR0dHZndnB2ZmxnanprYm15Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDMxNzUyODcsImV4cCI6MjA1ODc1MTI4N30.XKFnKhHV4S3WY3qd9fQ4eEe1SOW2JtI5JNPINW6BPWU' },
+        headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + 'sb_publishable_77AjzPzfXgMSvku0fRFD9w_l4hHVMvo' },
         body: JSON.stringify({
           venue: form.venue,
           contact_email: form.contact_email,
