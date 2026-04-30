@@ -3383,8 +3383,26 @@ function NoxReachApp({ user, session, supabase }) {
     if (!user) return;
     // Check if returning from Stripe checkout
     const params = new URLSearchParams(window.location.search);
-    if (params.get("upgraded") === "true") {
+    const fromStripe = params.get("upgraded") === "true";
+    if (fromStripe) {
       window.history.replaceState({}, "", window.location.pathname);
+      // Poll for pro status — webhook may take a few seconds
+      let attempts = 0;
+      const pollPro = async () => {
+        attempts++;
+        const { data } = await supabase.from("profiles").select("is_pro, pro_expires_at").eq("id", user.id).single();
+        const trialActive = data?.pro_expires_at && new Date(data.pro_expires_at) > new Date();
+        if (data?.is_pro || trialActive) {
+          setIsPro(true);
+          saveIsPro(true, user.id);
+          localStorage.setItem("nr_pro_welcomed_" + user.id, "1");
+          setShowWelcomePro(true);
+        } else if (attempts < 6) {
+          setTimeout(pollPro, 2000);
+        }
+      };
+      setTimeout(pollPro, 2000);
+      return;
     }
     supabase.from("profiles").select("is_pro, pro_expires_at").eq("id", user.id).single()
       .then(function(r) {
