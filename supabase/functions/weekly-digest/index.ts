@@ -133,8 +133,8 @@ Deno.serve(async () => {
 
   <tr><td style="padding:32px 36px 24px;border-bottom:1px solid rgba(255,255,255,0.07)">
     <table cellpadding="0" cellspacing="0" style="margin-bottom:18px"><tr>
-      <td><img src="https://rackagentur.github.io/NoxReach/public/nr-icon.png" width="38" height="38" style="border-radius:10px;display:block" alt="NR"></td>
-      <td style="padding-left:10px"><img src="https://rackagentur.github.io/NoxReach/public/nr-wordmark.png" height="20" style="display:block" alt="NoxReach"></td>
+      <td><img src="https://noxreach.com/public/nr-icon.png" width="38" height="38" style="border-radius:10px;display:block" alt="NR"></td>
+      <td style="padding-left:10px"><img src="https://noxreach.com/public/nr-wordmark.png" height="20" style="display:block" alt="NoxReach"></td>
     </tr></table>
     <div style="font-size:22px;font-weight:600;color:#fff;letter-spacing:-0.4px;margin-bottom:4px">Your weekly pipeline digest</div>
     <div style="font-size:13px;color:rgba(255,255,255,0.4)">${dateLabel}</div>
@@ -174,12 +174,12 @@ Deno.serve(async () => {
   ${sectionBlock("Booked this week", bookedRows, "No new bookings this week — keep pushing.")}
 
   <tr><td style="background:#0a0a0a;padding:28px 36px;text-align:center">
-    <a href="https://noxreach-nox.vercel.app" style="display:inline-block;background:#D4AF37;color:#0a0a0a;font-size:14px;font-weight:600;padding:13px 28px;border-radius:8px;text-decoration:none;letter-spacing:0.01em;margin-bottom:14px">Open NoxReach →</a>
+    <a href="https://app.noxreach.com" style="display:inline-block;background:#D4AF37;color:#0a0a0a;font-size:14px;font-weight:600;padding:13px 28px;border-radius:8px;text-decoration:none;letter-spacing:0.01em;margin-bottom:14px">Open NoxReach →</a>
     <div style="font-size:12px;color:rgba(255,255,255,0.25)">Your pipeline is waiting</div>
   </td></tr>
 
   <tr><td style="padding:14px 36px 24px;border-top:1px solid rgba(255,255,255,0.05);text-align:center">
-    <div style="font-size:11px;color:rgba(255,255,255,0.2);letter-spacing:0.04em">Weekly digest · NoxReach · <a href="https://noxreach-nox.vercel.app" style="color:rgba(255,255,255,0.2)">Unsubscribe</a></div>
+    <div style="font-size:11px;color:rgba(255,255,255,0.2);letter-spacing:0.04em">Weekly digest · NoxReach · <a href="https://app.noxreach.com" style="color:rgba(255,255,255,0.2)">Unsubscribe</a></div>
   </td></tr>
 
 </table>

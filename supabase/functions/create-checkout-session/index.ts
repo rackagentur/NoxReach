@@ -38,7 +38,7 @@ Deno.serve(async (req) => {
     const priceId = PRICE_IDS[plan as keyof typeof PRICE_IDS];
     if (!priceId) throw new Error("Invalid plan");
 
-    const appUrl = "https://noxreach-nox.vercel.app";
+    const appUrl = "https://app.noxreach.com";
 
     const session = await stripe.checkout.sessions.create({
       mode: "subscription",

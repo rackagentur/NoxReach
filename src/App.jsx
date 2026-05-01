@@ -113,8 +113,8 @@ WebkitTextFillColor: C.text,
       }}>
         {/* Logo */}
         <div style={{ textAlign: "center", marginBottom: 36 }}>
-          <img src="https://rackagentur.github.io/NoxReach/public/nr-icon.png" width="52" height="52" style={{ borderRadius: 13, marginBottom: 14, display: "block", margin: "0 auto 14px" }} alt="NR" />
-          <img src="https://rackagentur.github.io/NoxReach/public/nr-wordmark.png" height="18" style={{ display: "block", margin: "0 auto 6px", opacity: 0.9 }} alt="NoxReach" />
+          <img src="https://noxreach.com/public/nr-icon.png" width="52" height="52" style={{ borderRadius: 13, marginBottom: 14, display: "block", margin: "0 auto 14px" }} alt="NR" />
+          <img src="https://noxreach.com/public/nr-wordmark.png" height="18" style={{ display: "block", margin: "0 auto 6px", opacity: 0.9 }} alt="NoxReach" />
           <div style={{ fontSize: 11, color: C.cyan, letterSpacing: "0.14em", opacity: 0.8, marginTop: 2 }}>NIGHTLIFE OS</div>
           <div style={{ fontSize: 11, color: "rgba(255,255,255,0.35)", marginTop: 6, letterSpacing: "0.02em" }}>Track venues, replies, follow-ups, and booked gigs in one place.</div>
         </div>
@@ -1895,7 +1895,7 @@ function InboundView({ leads, user, supabase }) {
       .then(({ data }) => { if (data?.username) setUsername(data.username); });
   }, [user?.id]);
 
-  const bookingLink = username ? `https://noxreach-nox.vercel.app/book/${username}` : "Loading...";
+  const bookingLink = username ? `https://app.noxreach.com/book/${username}` : "Loading...";
   const copy = () => { if (!username) return; navigator.clipboard.writeText(bookingLink); setCopied(true); setTimeout(() => setCopied(false), 2000); };
 
   return (
@@ -1975,7 +1975,7 @@ function CookieBanner() {
     }}>
       <div style={{ fontSize: 12, color: COLORS.textSecondary, lineHeight: 1.6, flex: 1 }}>
         We use essential cookies to keep you logged in and save your settings.
-        No tracking, no ads. <a href="https://noxreach-nox.vercel.app/#privacy" target="_blank" rel="noopener noreferrer" style={{ color: COLORS.purpleLight, textDecoration: "none" }}>Privacy Policy</a>
+        No tracking, no ads. <a href="https://app.noxreach.com/#privacy" target="_blank" rel="noopener noreferrer" style={{ color: COLORS.purpleLight, textDecoration: "none" }}>Privacy Policy</a>
       </div>
       <div style={{ display: "flex", gap: 8, flexShrink: 0 }}>
         <button onClick={decline} style={{
@@ -2061,7 +2061,7 @@ function DeleteAccountButton() {
 
 // ─── Welcome New User Modal ────────────────────────────────────────────────
 function WelcomeNewUserModal({ onClose }) {
-  const APP_URL = "https://noxreach-nox.vercel.app";
+  const APP_URL = "https://app.noxreach.com";
   return (
     <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.75)", zIndex: 1000, display: "flex", alignItems: "center", justifyContent: "center", padding: 20 }}>
       <div style={{ background: COLORS.surface, border: `1px solid ${COLORS.border}`, borderRadius: 20, padding: 40, maxWidth: 480, width: "100%", position: "relative" }}>
@@ -2189,7 +2189,7 @@ function SettingsView({ settings, onSave, isPro, onUpgradeClick, customTags, def
   };
 
   const isDirty = local.followup1Days !== settings.followup1Days || local.followup2Days !== settings.followup2Days;
-  const bookingLink = username ? `https://noxreach-nox.vercel.app/book/${username}` : "";
+  const bookingLink = username ? `https://app.noxreach.com/book/${username}` : "";
 
   const SliderRow = ({ label, desc, stateKey, min, max, unit = "days" }) => {
     const val = local[stateKey];
@@ -3737,7 +3737,7 @@ const activeLeads = leads.filter(l => !l.archived);
       {/* Sidebar */}
       <div style={{ position: "fixed", left: 0, top: 0, bottom: 0, width: 220, background: COLORS.surface, borderRight: `1px solid ${COLORS.border}`, display: isMobile ? "none" : "flex", flexDirection: "column", zIndex: 100 }}>
         <div style={{ padding: "24px 20px 20px", borderBottom: `1px solid ${COLORS.border}` }}>
-          <a href="https://rackagentur.github.io/NoxReach/" target="_blank" rel="noopener noreferrer" style={{ textDecoration: "none", display: "flex", flexDirection: "column", alignItems: "center", gap: 8 }}>
+          <a href="https://noxreach.com/" target="_blank" rel="noopener noreferrer" style={{ textDecoration: "none", display: "flex", flexDirection: "column", alignItems: "center", gap: 8 }}>
             <img src="/nr-icon.png" alt="NoxReach" style={{ width: 54, height: 54, borderRadius: 13, flexShrink: 0 }} />
             <img src="/nr-wordmark.png" alt="NoxReach" style={{ height: 17, objectFit: "contain", opacity: 0.8 }} />
           </a>
@@ -3970,7 +3970,7 @@ function PublicBookingForm({ supabase }) {
   if (step === 'success') return (
     <div style={{ minHeight: '100vh', background: '#0a0a0a', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: '-apple-system, sans-serif', padding: 24 }}>
       <div style={{ textAlign: 'center', maxWidth: 480 }}>
-        <img src="https://rackagentur.github.io/NoxReach/public/nr-icon.png" width="48" height="48" style={{ borderRadius: 12, marginBottom: 24 }} alt="NR" />
+        <img src="https://noxreach.com/public/nr-icon.png" width="48" height="48" style={{ borderRadius: 12, marginBottom: 24 }} alt="NR" />
         <div style={{ fontSize: 28, fontWeight: 700, color: '#fff', marginBottom: 12 }}>Booking request sent</div>
         <div style={{ fontSize: 16, color: 'rgba(255,255,255,0.5)', lineHeight: 1.6, marginBottom: 32 }}>{djProfile.display_name} will review your request and get back to you soon.</div>
         <div style={{ fontSize: 13, color: 'rgba(255,255,255,0.25)' }}>Powered by NoxReach</div>
@@ -3982,7 +3982,7 @@ function PublicBookingForm({ supabase }) {
     <div style={{ minHeight: '100vh', background: '#0a0a0a', fontFamily: '-apple-system, sans-serif', padding: '40px 24px' }}>
       <div style={{ maxWidth: 520, margin: '0 auto' }}>
         <div style={{ textAlign: 'center', marginBottom: 40 }}>
-          <img src="https://rackagentur.github.io/NoxReach/public/nr-icon.png" width="44" height="44" style={{ borderRadius: 11, marginBottom: 16 }} alt="NR" />
+          <img src="https://noxreach.com/public/nr-icon.png" width="44" height="44" style={{ borderRadius: 11, marginBottom: 16 }} alt="NR" />
           <div style={{ fontSize: 24, fontWeight: 700, color: '#fff', marginBottom: 6 }}>Book {djProfile.display_name}</div>
           <div style={{ fontSize: 14, color: 'rgba(255,255,255,0.4)' }}>Fill out the form and we will get back to you</div>
         </div>

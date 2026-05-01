@@ -81,7 +81,7 @@ function proUpgradeEmail(displayName: string) {
     <p>If you get stuck, have feedback, or want to tell me what's working — just reply to this email. I read every one.</p>
     <p style="margin:0">See you on the floor.</p>
     <div class="cta-wrap">
-      <a href="https://noxreach-nox.vercel.app" class="btn">Open NoxReach Pro →</a>
+      <a href="https://app.noxreach.com" class="btn">Open NoxReach Pro →</a>
     </div>
     <div class="sig">
       <div class="sig-name">Gregorgus (GEEZ)</div>
@@ -90,7 +90,7 @@ function proUpgradeEmail(displayName: string) {
   </div>
   <div class="footer">
     You're receiving this because you upgraded to NoxReach Pro.<br />
-    <a href="mailto:hello@noxreach.io">hello@noxreach.io</a> · <a href="https://rackagentur.github.io/NoxReach/privacy.html">Privacy Policy</a>
+    <a href="mailto:hello@noxreach.io">hello@noxreach.io</a> · <a href="https://noxreach.com/privacy.html">Privacy Policy</a>
   </div>
 </div>
 </body>
